@@ -1,6 +1,6 @@
 <?php
 /** 
- *c lass tybot
+ *class tybot
  *
  * creates tybot object from which you can use to perform various functions
  *
