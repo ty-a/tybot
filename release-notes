@@ -1,0 +1,11 @@
+﻿TyBot Release Notes
+
+TyBot is a PHP bot framework for editing MediaWiki Wikis via the API.
+
+== 1.1.0 ==
+* Added some error checking
+* Added get_users_in_groups() to get the users in a specified usergroup
+* Most functions will now return their success or lack thereof
+
+== 1.0.0 ==
+* Initial release

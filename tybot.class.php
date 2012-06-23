@@ -142,12 +142,20 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
 		
-		foreach ($result["query"]["deletedrevs"] as $y) {
-			$token["undelete"] = $y["token"];
+		if(empty($result["error"])) {
+		
+			foreach ($result["query"]["deletedrevs"] as $y) {
+				$token["undelete"] = $y["token"];
+			}
+			
+			return $token["undelete"]; 
+		} else {
+			
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
 		}
-		
-		return $token["undelete"]; 
 		
 	}
 	
@@ -294,7 +302,7 @@ class tybot {
 	* @param string $text the content to be saved
 	* @param string $summary the edit summary
 	* @param int $bot if marked as bot
-	* @return none
+	* @return boolean based on success
 	*/
 	public function edit($page,$text,$summary='',$bot=1) {
 		global $token,$throttle;
@@ -309,11 +317,19 @@ class tybot {
 			"format" => "php"
 		);
 		
-		$result = $this->post_to_wiki($dataToPost);
-		echo "Sleeping for $throttle seconds.";
+		echo "Sleeping for $throttle seconds.\n";
 		sleep($throttle);
 		
+		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
 		
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+		}
+
 	}
 	
 	/**
@@ -323,7 +339,7 @@ class tybot {
 	*
 	* @param string $page the page to be deleted
 	* @param string $summary deletion reason
-	* @return none
+	* @return boolean based on success
 	*/
 	public function delete($page,$summary='') {
 		global $token;
@@ -337,8 +353,16 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
 		
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
 		}
+		
+	}
 	
 	/**
 	* function undelete()
@@ -347,7 +371,7 @@ class tybot {
 	*
 	* @param string $page the page to be undeleted
 	* @param string $summary the restore summary
-	* @return none
+	* @return boolean based on success
 	*/
 	public function undelete($page,$summary='') {
 		global $token;
@@ -360,7 +384,16 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
 		}
+		
+	}
 	
 	/**
 	* function userrights()
@@ -371,11 +404,11 @@ class tybot {
 	* @param string $add rights to add
 	* @param string $remove rights to remove
 	* @param string $summary summary for change
-	* @return none
+	* @return boolean based on success
 	*/
 	public function userrights($targetUser,$add='',$remove='',$summary='') {
 		
-		$userrightstoken = get_userrights_token($targetUser);
+		$userrightstoken = $this->get_userrights_token($targetUser);
 		$dataToPost = array(
 			'action' => 'userrights',
 			'user' => $targetUser,
@@ -387,9 +420,16 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
 		
-	
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
 		}
+	
+	}
 	
 	/**
 	* function protect
@@ -401,7 +441,7 @@ class tybot {
 	* @param string $editlevel the protection level on edit
 	* @param string $expiry the the protection expires
 	* @param string $summary the summary
-	* @return none
+	* @return boolean based on success
 	*/
 	public function protect($page,$movelevel='',$editlevel='',$expiry='',$summary='') {
 		global $token;
@@ -417,9 +457,17 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
 		
+		if(empty($result["error"])) {
 		
+			return true;
+
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
 		}
+	}
 	
 	/**
 	* function block()
@@ -429,7 +477,7 @@ class tybot {
 	* @param string $target user to block
 	* @param string $summary the block reason
 	* @param string $expiry when block expires
-	* @return none
+	* @return boolean based on success
 	*/
 	public function block($target,$summary='',$expiry="infinite") {
 		global $token;
@@ -444,6 +492,13 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+		}
 	}
 	
 	/**
@@ -453,7 +508,7 @@ class tybot {
 	*
 	* @param string $target the user to unblock
 	* @param string $summary the unblock reason
-	* @return none
+	* @return boolean based on success
 	*/
 	public function unblock($target,$summary='') {
 		global $token;
@@ -467,16 +522,24 @@ class tybot {
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		if(empty($result["error"])) {
+			return true;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+		}
 	
 	}
 	
 	/** 
 	* function get_category_members
 	*
-	* Gets the titles of the pages in a category
+	* Gets the titles of the pages in a category (Currently up to 5k)
 	*
 	* @param string $category the category to get the pages from
-	* @return array of page titles
+	* @return array of page titles (False on ERROR)
 	*/
 	public function get_category_members($category) {
 		
@@ -492,13 +555,19 @@ class tybot {
 		$result = $this->post_to_wiki($dataToPost);
 		
 		var_dump($result);
-		
-		foreach($result["query"]["categorymembers"] as $y) {
-			$pages[] = $y["title"];
-		}
-		
-		return $pages;
 	
+		if(empty($result["error"])) {
+		
+			foreach($result["query"]["categorymembers"] as $y) {
+				$pages[] = $y["title"];
+			}
+		
+			return $pages;
+		} else {
+		
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+		}
 	}
 	
 	/**
@@ -517,6 +586,42 @@ class tybot {
 		
 		$this->edit($page,$content,"Replacing " . $find . " with " . $replace ,"1");
 		
+	}
+	
+	/**
+	* function get_users_in_group()
+	*
+	* Returns all the users in a specified usergroup
+	*
+	* @param string $group The usergroup to get members of
+	* @param int $amount The amount of results
+	* @return array The users in the group (False on ERROR)
+	*/
+	public function get_users_in_group($group,$amount="max") {
+		$dataToPost = array(
+			'action' => 'query',
+			'list' => 'allusers',
+			'augroup' => $group,
+			'aulimit' => $amount,
+			'format' => 'php',
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		if(empty($result["error"])) {
+		
+			foreach($result["query"]["allusers"] as $y) {
+				$users[] = $y["name"];
+			}
+		
+			return $users;
+			
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+			
+		}
 	}
 	
 }
