@@ -1,7 +1,7 @@
 tybot
 =====
 
-The PHP wikibot framework named TyBot.
+The PHP wikibot framework named TyBot written by Wikia and Wikimedia user TyA.
 
 ===== 
 
