@@ -1,6 +1,21 @@
 <?php
+/** 
+ *c lass tybot
+ *
+ * creates tybot object from which you can use to perform various functions
+ *
+*/
 class tybot {
 
+	/** 
+	* function login()
+	*
+	* Logs into the wiki via the API
+	*
+	* @param string $user the bot's username
+	* @param string $pass the bot's password
+	* @return true/false depending if login was successful
+	*/
 	public function login($user,$pass) {
 		global $wiki;
 		
@@ -29,10 +44,19 @@ class tybot {
 		
 		} else {
 			print "Failed!";
+			return false;
 		}
 		
 		}
 	
+	/**
+	* function post_to_wiki()
+	*
+	* POSTs data to the wiki
+	*
+	* @param array $dataToPost the info to post
+	* @return the info from the POST
+	*/
 	public function post_to_wiki($dataToPost) {
 	
 		global $curloptions,$wiki,$useragent;
@@ -48,6 +72,12 @@ class tybot {
 		return $result;
 	}
 	
+	/**
+	* function get_edit_token()
+	*
+	* @param none
+	* @return the edit token
+	*/
 	public function get_edit_token() {
 	
 		$dataToPost = array(
@@ -67,7 +97,14 @@ class tybot {
 		return $token["edit"];
 		
 		}
-		
+	/**
+	* function get_delete_token()
+	* 
+	* Gets the delete token
+	*
+	* @param none
+	* @return the delete token
+	*/
 	public function get_delete_token() {
 	
 		$dataToPost = array(
@@ -88,6 +125,14 @@ class tybot {
 		
 		}
 		
+	/**
+	* function get_undelete_token()
+	*
+	* Gets the undelete token
+	*
+	* @param none
+	* @return the undelete token
+	*/
 	public function get_undelete_token() {
 		$dataToPost = array(
 			"action" => "query",
@@ -106,6 +151,14 @@ class tybot {
 		
 	}
 	
+	/**
+	* function get_userrights_token
+	*
+	* Gets the userrights token
+	*
+	* @param string $targetUser the user whose rights are being changed
+	* @return the userrights token
+	*/
 	public function get_userrights_token($targetUser) {
 		$dataToPost = array(
 			"action" => "query",
@@ -124,6 +177,14 @@ class tybot {
 		
 	}
 	
+	/**
+	* function get_protect_token()
+	*
+	* Gets the protect token
+	*
+	* @param none
+	* @return the protect token
+	*/
 	public function get_protect_token() {
 		$dataToPost = array(
 			"action" => "query",
@@ -143,6 +204,14 @@ class tybot {
 	
 	}
 	
+	/**
+	* function get_block_token()
+	*
+	* Gets the block token
+	*
+	* @param none
+	* @return the block token
+	*/
 	public function get_block_token() {
 		$dataToPost = array(
 			'action' => 'query',
@@ -160,7 +229,15 @@ class tybot {
 		
 		return $token["block"];
 	}
-		
+	
+	/**
+	* function get_unblock_token()
+	*
+	* Gets the unblock token
+	*
+	* @param none
+	* @return the unblock token
+	*/
 	public function get_unblock_token() {
 		$dataToPost = array(
 			'action' => 'query',
@@ -179,6 +256,14 @@ class tybot {
 		return $token["unblock"];
 	}
 	
+	/**
+	* function get_page_content()
+	*
+	* Gets the content of the specified page
+	*
+	* @param string $page the page to get the content of
+	* @return the page content
+	*/
 	public function get_page_content($page) {
 	
 		$dataToPost = array(
@@ -199,7 +284,18 @@ class tybot {
 			}
 		}
 	}
-		
+	
+	/**
+	* function edit()
+	*
+	* Edits pages
+	*
+	* @param string $page the page to edit
+	* @param string $text the content to be saved
+	* @param string $summary the edit summary
+	* @param int $bot if marked as bot
+	* @return none
+	*/
 	public function edit($page,$text,$summary='',$bot=1) {
 		global $token,$throttle;
 		
@@ -220,6 +316,15 @@ class tybot {
 		
 	}
 	
+	/**
+	* function delete()
+	*
+	* Deletes pages
+	*
+	* @param string $page the page to be deleted
+	* @param string $summary deletion reason
+	* @return none
+	*/
 	public function delete($page,$summary='') {
 		global $token;
 		
@@ -234,7 +339,16 @@ class tybot {
 		$result = $this->post_to_wiki($dataToPost);
 		
 		}
-		
+	
+	/**
+	* function undelete()
+	*
+	* Undeletes pages
+	*
+	* @param string $page the page to be undeleted
+	* @param string $summary the restore summary
+	* @return none
+	*/
 	public function undelete($page,$summary='') {
 		global $token;
 		$dataToPost = array(
@@ -247,7 +361,18 @@ class tybot {
 		
 		$result = $this->post_to_wiki($dataToPost);
 		}
-		
+	
+	/**
+	* function userrights()
+	*
+	* Modifies userrights
+	*
+	* @param string $targetUser user whose rights are being changed
+	* @param string $add rights to add
+	* @param string $remove rights to remove
+	* @param string $summary summary for change
+	* @return none
+	*/
 	public function userrights($targetUser,$add='',$remove='',$summary='') {
 		
 		$userrightstoken = get_userrights_token($targetUser);
@@ -265,7 +390,19 @@ class tybot {
 		
 	
 		}
-		
+	
+	/**
+	* function protect
+	*
+	* Changes page's protection levels
+	*
+	* @param string $page the target page
+	* @param string $movelevel the protection level on move
+	* @param string $editlevel the protection level on edit
+	* @param string $expiry the the protection expires
+	* @param string $summary the summary
+	* @return none
+	*/
 	public function protect($page,$movelevel='',$editlevel='',$expiry='',$summary='') {
 		global $token;
 		
@@ -283,7 +420,17 @@ class tybot {
 		
 		
 		}
-		
+	
+	/**
+	* function block()
+	*
+	* Blocks users
+	*
+	* @param string $target user to block
+	* @param string $summary the block reason
+	* @param string $expiry when block expires
+	* @return none
+	*/
 	public function block($target,$summary='',$expiry="infinite") {
 		global $token;
 		
@@ -299,6 +446,15 @@ class tybot {
 		$result = $this->post_to_wiki($dataToPost);
 	}
 	
+	/**
+	* function unblock()
+	* 
+	* Unblocks users
+	*
+	* @param string $target the user to unblock
+	* @param string $summary the unblock reason
+	* @return none
+	*/
 	public function unblock($target,$summary='') {
 		global $token;
 		
@@ -314,6 +470,14 @@ class tybot {
 	
 	}
 	
+	/** 
+	* function get_category_members
+	*
+	* Gets the titles of the pages in a category
+	*
+	* @param string $category the category to get the pages from
+	* @return array of page titles
+	*/
 	public function get_category_members($category) {
 		
 		$dataToPost = array(
@@ -337,6 +501,16 @@ class tybot {
 	
 	}
 	
+	/**
+	* function find_and_replace()
+	*
+	* Finds and replaces content in pages
+	*
+	* @param string $page the page to check on
+	* @param string $find what is being changed
+	* @param string $replace what is being added
+	* @return none
+	*/
 	public function find_and_replace($page,$find,$replace) {
 		$content = $this->get_page_content($page);
 		$content = str_replace($find,$replace,$content);
