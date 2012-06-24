@@ -6,7 +6,7 @@
 
 	$user = ""; // Bot's user account
 	$pass = ""; // Bot's password
-	$wiki = "; // The link to the wiki's api.php
+	$wiki = ""; // The link to the wiki's api.php
 	$operator_email = ""; // Your email address used in the useragent
 	
 	$version = "1.2.0"; // Version number
