@@ -666,4 +666,55 @@ class tybot {
 		
 		return $pages;
 	}
+	/**
+	* function query_page()
+	*
+	* Function to get info from from the querypage list
+	*
+	* @param string $type The type of info to return Values: Ancientpages, BrokenRedirects, Deadendpages, Disambiguations, DoubleRedirects, Listredirects, Lonelypages, Longpages, Mostcategories, Mostimages, Mostlinkedcategories, Mostlinkedtemplates, Mostlinked, Mostrevisions, Fewestrevisions, Shortpages, Uncategorizedcategories, Uncategorizedpages, Uncategorizedimages, Uncategorizedtemplates, Unusedcategories, Unusedimages, Wantedcategories, Wantedfiles, Wantedpages, Wantedtemplates, Unwatchedpages, Unusedtemplates, Withoutinterwiki
+	* @param $limit How many results to return (Default: "max")
+	* @return array result (false if fails)
+	*/
+	function query_page($type,$limit="max") {
+
+		$dataToPost = array(
+			'action' => 'query',
+			'list' => 'querypage',
+			'qppage' => $type,
+			'qplimit' => $limit,
+			'format' => 'php'
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		if(empty($result["error"])) {
+
+			return $result;
+		} else {
+			print "ERROR: " . $result["error"]["code"] . "\n";
+			return false;
+		}
+		
+	}
+	
+	/**
+	* function fix_double_redirects()
+	*
+	* Fixes double redirects
+	*
+	* @param none
+	* @return boolean based on success
+	*/
+	function fix_double_redirects() {
+		$result = $this->query_page("DoubleRedirects");
+		
+		foreach($result["query"]["querypage"]["results"] as $y) {
+			$content = "#REDIRECT [[" . $y["databaseResult"]["tc"] . "]]";
+			
+			$this->edit($y["title"], $content, "Fixing double redirect");
+
+		}
+
+	}
 }

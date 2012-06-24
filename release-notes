@@ -2,6 +2,10 @@
 
 TyBot is a PHP bot framework for editing MediaWiki Wikis via the API.
 
+== 1.3.0 ==
+* Added fix_double_redirect function to fix double redirects
+* Added query_page function to make use of list=querypage
+
 == 1.2.0 ==
 * Added get_random_pages function to return random pages
 * Added return for find_and_replace function based on success
