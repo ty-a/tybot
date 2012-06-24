@@ -586,7 +586,7 @@ class tybot {
 		
 		$result = $this->edit($page,$content,"Replacing " . $find . " with " . $replace ,"1");
 		
-		if $result = false {
+		if ($result = false) {
 			print "Error editing page";
 			return false;
 		} else {
