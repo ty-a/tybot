@@ -578,13 +578,20 @@ class tybot {
 	* @param string $page the page to check on
 	* @param string $find what is being changed
 	* @param string $replace what is being added
-	* @return none
+	* @return boolean based on success
 	*/
 	public function find_and_replace($page,$find,$replace) {
 		$content = $this->get_page_content($page);
 		$content = str_replace($find,$replace,$content);
 		
-		$this->edit($page,$content,"Replacing " . $find . " with " . $replace ,"1");
+		$result = $this->edit($page,$content,"Replacing " . $find . " with " . $replace ,"1");
+		
+		if $result = false {
+			print "Error editing page";
+			return false;
+		} else {
+			return true;
+		}
 		
 	}
 	
@@ -595,7 +602,7 @@ class tybot {
 	*
 	* @param string $group The usergroup to get members of
 	* @param int $amount The amount of results
-	* @return array The users in the group (False on ERROR)
+	* @return array The users in the group (false on error)
 	*/
 	public function get_users_in_group($group,$amount="max") {
 		$dataToPost = array(
@@ -624,4 +631,39 @@ class tybot {
 		}
 	}
 	
+	/**
+	* function get_random_pages()
+	*
+	* @param string $limit how many pages to return (Default: 10)
+	* @param string $namespace numerical ID of namespace to get pages from (Default: 0)
+	* @return array of pages (print warnings)
+	*/
+	public function get_random_pages($limit = 10,$namespace = 0) {
+	
+		$dataToPost = array(
+			'action' => 'query',
+			'list' => 'random',
+			'rnlimit' => $limit,
+			'rnnamespace' => $namespace,
+			'format' => 'php'
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		
+		if(empty($result["warnings"])) {
+		
+			foreach($result["query"]["random"] as $y) {
+				$pages[] = $y["title"];
+			}
+			
+		} else {
+			
+			print $result["warnings"]["random"];
+			foreach($result["query"]["random"] as $y) {
+				$pages[] = $y["title"];
+			}
+		}
+		
+		return $pages;
+	}
 }
