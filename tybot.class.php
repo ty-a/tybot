@@ -1,6 +1,6 @@
 <?php
 /** 
- *class tybot
+ * class tybot
  *
  * creates tybot object from which you can use to perform various functions
  *
@@ -536,40 +536,56 @@ class tybot {
 	/** 
 	* function get_category_members
 	*
-	* Gets the titles of the pages in a category (Currently up to 5k)
+	* Gets the titles of all the pages in a category 
 	*
 	* @param string $category the category to get the pages from
-	* @return array of page titles (False on ERROR)
+	* @param $limit amount of pages to return (default: "max")
+	* @return array of page titles (false on error)
 	*/
-	public function get_category_members($category) {
+	public function get_category_members($category,$limit="max") {
+		$cmcontinue = '';
+		while(true) {
+			if ($cmcontinue === '') {
+				$dataToPost = array(
+					'action' => 'query',
+					'list' => 'categorymembers',
+					'cmtitle' => $category,
+					'cmlimit' => $limit,
+					'cmprop' => 'title',
+					'format' => 'php'
+				);
+			} else {
+				$dataToPost = array(
+					'action' => 'query',
+					'list' => 'categorymembers',
+					'cmtitle' => $category,
+					'cmlimit' => $limit,
+					'cmprop' => 'title',
+					'cmcontinue' => $cmcontinue,
+					'format' => 'php'
+				);
+			}
 		
-		$dataToPost = array(
-			'action' => 'query',
-			'list' => 'categorymembers',
-			'cmtitle' => $category,
-			'cmlimit' => 'max',
-			'cmprop' => 'title',
-			'format' => 'php'
-		);
-		
-		$result = $this->post_to_wiki($dataToPost);
-		
-		var_dump($result);
+			$result = $this->post_to_wiki($dataToPost);
+			#var_dump($result);
 	
-		if(empty($result["error"])) {
-		
+			if(!empty($result["error"])) {
+				print "ERROR: " . $result["error"]["code"] . "\n";
+				return false;
+			}
+			
 			foreach($result["query"]["categorymembers"] as $y) {
 				$pages[] = $y["title"];
 			}
 		
-			return $pages;
-		} else {
-		
-			print "ERROR: " . $result["error"]["code"] . "\n";
-			return false;
+			if(empty($result["query-continue"])) {
+				return $pages;
+			} else {
+				$cmcontinue = $result["query-continue"]["categorymembers"]["cmcontinue"];
+			}
+
 		}
 	}
-	
 	/**
 	* function find_and_replace()
 	*
@@ -745,37 +761,91 @@ class tybot {
 	*/
 	public function get_all_pages($redirects = "nonredirects",$namespace = 0,$limit="max") {
 	
-	$apfrom = '';
-	$pages = array();
+		$apfrom = '';
+		$pages = array();
 	
-	while (true) {
+		while (true) {
 	
-		$dataToPost = array(
-			'action' => 'query',
-			'list' => 'allpages',
-			'apfrom' => $apfrom,
-			'apfilterredir' => $redirects,
-			'apnamespace' => $namespace,
-			'aplimit' => $limit,
-			'format' => 'php'
-		);
+			$dataToPost = array(
+				'action' => 'query',
+				'list' => 'allpages',
+				'apfrom' => $apfrom,
+				'apfilterredir' => $redirects,
+				'apnamespace' => $namespace,
+				'aplimit' => $limit,
+				'format' => 'php'
+			);
 		
-		$result = $this->post_to_wiki($dataToPost);
+			$result = $this->post_to_wiki($dataToPost);
 		
-		if(!empty($result["error"])) {
-			return false;
+			if(!empty($result["error"])) {
+				return false;
 			
-		}
+			}
 		
-		foreach($result["query"]["allpages"] as $y) {
-			$pages[] = $y["title"];
-		}
+			foreach($result["query"]["allpages"] as $y) {
+				$pages[] = $y["title"];
+			}
 		
-		if(empty($result["query-continue"]["allpages"])) {
-			return $pages;
-		} else {
-			$apfrom = $result["query-continue"]["allpages"]["apfrom"];
+			if(empty($result["query-continue"]["allpages"])) {
+				return $pages;
+			} else {
+				$apfrom = $result["query-continue"]["allpages"]["apfrom"];
+			}
 		}
 	}
+	
+	/**
+	* function get_what_links_here()
+	*
+	* @param $page The page to get what links to
+	* @param $limit # of pages to return (default "max")
+	* @param $redirects Whether or not to show redirects 
+	*     Values: all (default), redirects, nonredirects
+	* @return array of pages (false on failure)
+	*/
+	public function get_what_links_here($page,$limit="max",$redirects="all") {
+		$blcontinue = '';
+		while(true) {
+			if ($blcontinue === '') {
+				$dataToPost = array(
+					'action' => 'query',
+					'list' => 'backlinks',
+					'bltitle' => $page,
+					'bllimit' => $limit,
+					'blfilterredir' => $redirects,
+					'format' => 'php'
+				);
+				
+			} else {
+				$dataToPost = array(
+					'action' => 'query',
+					'list' => 'backlinks',
+					'bltitle' => $page,
+					'bllimit' => $limit,
+					'blcontinue' => $blcontinue,
+					'blfilterredir' => $redirects,
+					'format' => 'php'
+				);
+			}
+		
+			$result = $this->post_to_wiki($dataToPost);
+			
+			if(!empty($result["error"])) {
+				print "ERROR: " . $result["error"]["code"] . "\n";
+				return false;
+			}
+			
+			foreach($result["query"]["backlinks"] as $y) {
+				$pages[] = $y["title"];
+			}
+			
+			if(empty($result["query-continue"])) {
+				return $pages;
+			} else {
+				$blcontinue = $result["query-continue"]["backlinks"]["blcontinue"];
+			}
+		}
+	
 	}
 }
