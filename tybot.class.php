@@ -671,11 +671,21 @@ class tybot {
 	*
 	* Function to get info from from the querypage list
 	*
-	* @param string $type The type of info to return Values: Ancientpages, BrokenRedirects, Deadendpages, Disambiguations, DoubleRedirects, Listredirects, Lonelypages, Longpages, Mostcategories, Mostimages, Mostlinkedcategories, Mostlinkedtemplates, Mostlinked, Mostrevisions, Fewestrevisions, Shortpages, Uncategorizedcategories, Uncategorizedpages, Uncategorizedimages, Uncategorizedtemplates, Unusedcategories, Unusedimages, Wantedcategories, Wantedfiles, Wantedpages, Wantedtemplates, Unwatchedpages, Unusedtemplates, Withoutinterwiki
+	* @param string $type The type of info to return 
+	* Values: Ancientpages, BrokenRedirects, Deadendpages, 
+	*     Disambiguations, DoubleRedirects, Listredirects, 
+	*     Lonelypages, Longpages, Mostcategories, Mostimages, 
+	*     Mostlinkedcategories, Mostlinkedtemplates, Mostlinked, 
+	*     Mostrevisions, Fewestrevisions, Shortpages, 
+	*     Uncategorizedcategories, Uncategorizedpages, 
+	*     Uncategorizedimages, Uncategorizedtemplates, 
+	*     Unusedcategories, Unusedimages, Wantedcategories, 
+	*     Wantedfiles, Wantedpages, Wantedtemplates, 
+	*     Unwatchedpages, Unusedtemplates, Withoutinterwiki
 	* @param $limit How many results to return (Default: "max")
 	* @return array result (false if fails)
 	*/
-	function query_page($type,$limit="max") {
+	public function query_page($type,$limit="max") {
 
 		$dataToPost = array(
 			'action' => 'query',
@@ -706,15 +716,66 @@ class tybot {
 	* @param none
 	* @return boolean based on success
 	*/
-	function fix_double_redirects() {
+	public function fix_double_redirects() {
 		$result = $this->query_page("DoubleRedirects");
 		
 		foreach($result["query"]["querypage"]["results"] as $y) {
 			$content = "#REDIRECT [[" . $y["databaseResult"]["tc"] . "]]";
 			
-			$this->edit($y["title"], $content, "Fixing double redirect");
-
+			$result = $this->edit($y["title"], $content, "Fixing double redirect");
+			
+			if($result === false) {
+				return false;
+			} else { 
+				return true;
+			}
 		}
-
+	}
+	
+	/**
+	* function get_all_pages()
+	*
+	* Returns all the pages
+	*
+	* @param string $redirects show redirects, only redirects, or no redirects (default no redirects)
+	*     legal values: all, redirects, nonredirects
+	* @param $namespace the numerical namespace number (default 0)
+	* @param $limit number of results per query. (default max)
+	* @return array of all pages (false on failure)
+	*/
+	public function get_all_pages($redirects = "nonredirects",$namespace = 0,$limit="max") {
+	
+	$apfrom = '';
+	$pages = array();
+	
+	while (true) {
+	
+		$dataToPost = array(
+			'action' => 'query',
+			'list' => 'allpages',
+			'apfrom' => $apfrom,
+			'apfilterredir' => $redirects,
+			'apnamespace' => $namespace,
+			'aplimit' => $limit,
+			'format' => 'php'
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		
+		if(!empty($result["error"])) {
+			return false;
+			
+		}
+		
+		foreach($result["query"]["allpages"] as $y) {
+			$pages[] = $y["title"];
+		}
+		
+		if(empty($result["query-continue"]["allpages"])) {
+			return $pages;
+		} else {
+			$apfrom = $result["query-continue"]["allpages"]["apfrom"];
+		}
+	}
 	}
 }
