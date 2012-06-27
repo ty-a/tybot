@@ -67,7 +67,7 @@ class tybot {
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $dataToPost);
 		$result = curl_exec($ch);
 		$result = unserialize($result);
-		var_dump($result);
+		#var_dump($result);
 		
 		return $result;
 	}
@@ -530,7 +530,6 @@ class tybot {
 			print "ERROR: " . $result["error"]["code"] . "\n";
 			return false;
 		}
-	
 	}
 	
 	/** 
@@ -583,9 +582,9 @@ class tybot {
 			} else {
 				$cmcontinue = $result["query-continue"]["categorymembers"]["cmcontinue"];
 			}
-
 		}
 	}
+	
 	/**
 	* function find_and_replace()
 	*
@@ -682,6 +681,7 @@ class tybot {
 		
 		return $pages;
 	}
+	
 	/**
 	* function query_page()
 	*
@@ -846,6 +846,48 @@ class tybot {
 				$blcontinue = $result["query-continue"]["backlinks"]["blcontinue"];
 			}
 		}
+	}
 	
+	/**
+	* function get_user_contribs()
+	*
+	* return an array with all the user's contribs
+	* @param $user the user to get params for
+	* @return array with contribs or false on error
+	*/
+	public function get_user_contribs($user) {
+		$ucstart = '';
+		$contribs = array();
+		while(true) {
+			
+			$dataToPost = array(
+				'action' => 'query',
+				'list' => 'usercontribs',
+				'ucstart' => $ucstart,
+				'ucuser' => $user,
+				'uclimit' => "max",
+				'ucprop' => 'title|timestamp|comment|flags',
+				'ucdir' => 'older',
+				'format' => 'php'
+			);
+					
+			$result = $this->post_to_wiki($dataToPost);
+			#var_dump($result);
+			
+			if(!empty($result["error"])) {
+				print "ERROR: " . $result["error"]["code"] . "\n";
+				return false;
+			}
+			
+			foreach($result["query"]["usercontribs"] as $y) {
+					$contribs[] = $y;
+			}
+			
+			if(!empty($result["query-continue"])) {
+				$ucstart = $result["query-continue"]["usercontribs"]["ucstart"];
+			} else {
+				return $contribs;
+			}
+		}
 	}
 }

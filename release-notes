@@ -2,6 +2,10 @@
 
 TyBot is a PHP bot framework for editing MediaWiki Wikis via the API.
 
+== 1.6.0 == 
+* Added get_user_contribs function to get a user's contribs
+* Less verbose
+
 == 1.5.0 ==
 * Added get_what_links_here function to return all pages that link to a page
 * Changed get_category_members function to return all pages in categories larger than "max"
