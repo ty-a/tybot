@@ -890,4 +890,42 @@ class tybot {
 			}
 		}
 	}
+	
+	/** 
+	* function get_log_events
+	*
+	* @param $user whose logs to get
+	* @return array with contribs or false on error
+	*/
+	public function get_log_events($user) {
+		$lestart = '';
+		while(true) {
+			$dataToPost = array(
+				'action' => 'query',
+				'list' => 'logevents',
+				'leuser' => $user,
+				'lelimit' => 'max',
+				'lestart' => $lestart,
+				'format' => 'php'
+			);
+			
+			$result = $this->post_to_wiki($dataToPost);
+			var_dump($result);
+			
+			if(!empty($result["error"])) {
+				print "ERROR: " . $result["error"]["code"] . "\n";
+				return false;
+			}
+			
+			foreach($result["query"]["logevents"] as $y) {
+				$logevents[] = $y;
+			}
+			
+			if(!empty($result["query-continue"])) {
+				$lestart = $result["query-continue"]["logevents"]["lestart"];
+			} else {
+				return $logevents;
+			}
+		}
+	}		
 }
