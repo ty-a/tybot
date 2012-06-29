@@ -855,7 +855,7 @@ class tybot {
 	* @param $user the user to get params for
 	* @return array with contribs or false on error
 	*/
-	public function get_user_contribs($user) {
+	public function get_user_contribs($user,$namespace='',$limit='max',$all=true) {
 		$ucstart = '';
 		$contribs = array();
 		while(true) {
@@ -865,9 +865,10 @@ class tybot {
 				'list' => 'usercontribs',
 				'ucstart' => $ucstart,
 				'ucuser' => $user,
-				'uclimit' => "max",
+				'uclimit' => $limit,
 				'ucprop' => 'title|timestamp|comment|flags',
 				'ucdir' => 'older',
+				'ucnamespace' => $namespace,
 				'format' => 'php'
 			);
 					
@@ -882,9 +883,12 @@ class tybot {
 			foreach($result["query"]["usercontribs"] as $y) {
 					$contribs[] = $y;
 			}
-			
-			if(!empty($result["query-continue"])) {
-				$ucstart = $result["query-continue"]["usercontribs"]["ucstart"];
+			if($all === true) {
+				if(!empty($result["query-continue"])) {
+					$ucstart = $result["query-continue"]["usercontribs"]["ucstart"];
+				} else {
+					return $contribs;
+				}
 			} else {
 				return $contribs;
 			}
@@ -910,7 +914,7 @@ class tybot {
 			);
 			
 			$result = $this->post_to_wiki($dataToPost);
-			var_dump($result);
+			#var_dump($result);
 			
 			if(!empty($result["error"])) {
 				print "ERROR: " . $result["error"]["code"] . "\n";
@@ -927,5 +931,5 @@ class tybot {
 				return $logevents;
 			}
 		}
-	}		
+	}
 }
