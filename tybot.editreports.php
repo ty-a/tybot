@@ -61,6 +61,45 @@
 		1202 => 0 // Message Wall Greeting
 	);
 	
+	$namespace_names = array(
+		0 => 'Mainspace', // main
+		1 => 'Talk', // talk
+		2 => 'User', // user
+		3 => 'User talk', // user talk
+		4 => 'Project', // project 
+		5 => 'Project talk', // project talk
+		6 => 'File', // file
+		7 => 'File talk', // file talk
+		8 => 'MediaWiki', // MediaWiki
+		9 => 'MediaWiki talk', // MediaWiki talk
+		10 => 'Template', // Template
+		11 => 'Template talk', // Template talk
+		12 => 'Help', // Help
+		13 => 'Help talk', //Help talk
+		14 => 'Category', // Category
+		15 => 'Category talk', // Category talk
+		100 => 'Update', // Update
+		101 => 'Update talk', // Update talk
+		110 => 'Forum', // Forum
+		111 => 'Forum talk', // Forum talk
+		112 => 'Exchange', // Exchange
+		113 => 'Exchange talk', // Exchange talk
+		114 => 'Charm', // Charm
+		115 => 'Charm talk' , // Charm talk
+		116 => 'Calculator ', // Calculator 
+		117 => 'Calculator talk', // Calculator talk
+		118 => 'Map', // Map
+		119 => 'Map talk', // Map talk
+		120 => 'Beta',  // Beta
+		121 => 'Beta talk',  // Beta talk
+		1100 => 'RelatedVideos', // RelatedVideos
+		1200 => 'Message Wall', // Message Wall
+		1201 => 'Thread', // Thread
+		1202 => 'Message Wall Greeting' // Message Wall Greeting
+	);
+	
+	$titles = array();
+	$summaries = array();
 	$minor_edits = 0;
 	$new_pages = 0;
 	$no_summary = 0;
@@ -71,7 +110,7 @@
 	
 	if(strpos($last_report[0]["title"], $target) !== false ) {
 		die("Their report was last\n");
-	}
+	} 
 	
 	$result = $tybot->login($user,$pass);
 	
@@ -93,15 +132,26 @@
 		if (isset($y["new"])) {
 			$new_pages += 1;
 		}
-		
-		if($y["comment"] = '') {
+		$length = mb_strlen($y["comment"]);
+		if($length = 0) {
 			$no_summary += 1;
+		} else {
+			if(!isset($summaries[$y["comment"]])) {
+				$summaries[$y["comment"]] = 0;
+			}
+			
+			$summaries[$y["comment"]] += 1;
 		}
 		
 		if(isset($y["top"])) {
 			$top += 1;
 		}
 		
+		if(!isset($titles[$y["title"]])) {
+			$titles[$y["title"]] = 0;
+		}
+		
+		$titles[$y["title"]] += 1;
 		$namespace_edits[$y["ns"]] += 1;
 	}
 	
@@ -128,6 +178,10 @@
 	
 	print "Processing log events\n";
 	foreach($logevents as $y) {
+		if(!isset($logtypes[$y["type"]])) {
+			$logtypes[$y["type"]] = 0;
+		}
+		
 		$logtypes[$y["type"]] += 1;
 	}
 	
@@ -137,6 +191,55 @@
 	print "Minor count: " . $minor_edits . "\n";
 	print "New pages: " . $new_pages . "\n";
 	print "Top: " . $top . "\n";
+	
+	print "Making pie charts\n";
+	
+	/* Get top 5 pages */
+	for($counter=0;$counter<5;$counter+=1) {
+		$max = array_keys($titles, max($titles));
+		$most_edited[$counter] = $max[0];
+		$times_edited[$counter] = $titles[$most_edited[$counter]];
+		unset($titles[$most_edited[$counter]]);
+	}
+	/* END Get top 5 pages*/
+	
+	/* Get top 5 summaries */
+	for($counter=0;$counter<5;$counter+=1) {
+		$max = array_keys($summaries, max($summaries));
+		$summary[$counter] = $max[0];
+		$times_used[$counter] = $summaries[$summary[$counter]];
+		unset($summaries[$summary[$counter]]);
+	}
+	/* END Get top 5 summaries */
+	
+	/* Make edit by namespace pie chart */
+	$max = array_keys($namespace_edits, max($namespace_edits));
+	$max = $max[0];
+	
+	$counter = 2;
+$namespace_pie = "
+{{Pie
+|size = 250
+|legend = yes
+|tot = $editcount	
+|$namespace_edits[$max]
+|l1 = $namespace_names[$max]: $namespace_edits[$max]";
+
+unset($namespace_edits[$max]);
+
+foreach($namespace_edits as $y => $value) {
+	if($namespace_edits[$y] === 0) {
+		unset($namespace_edits[$y]);
+	} else {
+		$namespace_pie.= "
+|$namespace_edits[$y]
+|l" . $counter . " = $namespace_names[$y]: $value";
+		$counter += 1;
+	}
+}
+	$namespace_pie .= "}}";
+
+	/* End namespace pie chart */
 	
 	$max = array_keys($logtypes, max($logtypes));
 	
@@ -170,73 +273,10 @@ $pie .= "
 	$content = 
 "
 == [[User:$target|$target]]'s Edit Report ==
+:''Last updated at ~~~~~''
 
 === Edits by namespace === 
-{{Pie
-|size=250
-|legend=yes
-|tot=$editcount
-|$namespace_edits[0]
-|$namespace_edits[1]
-|$namespace_edits[2]
-|$namespace_edits[3]
-|$namespace_edits[4]
-|$namespace_edits[5]
-|$namespace_edits[6]
-|$namespace_edits[7]
-|$namespace_edits[8]
-|$namespace_edits[9]
-|$namespace_edits[10]
-|$namespace_edits[11]
-|$namespace_edits[12]
-|$namespace_edits[13]
-|$namespace_edits[14]
-|$namespace_edits[15]
-|$namespace_edits[100]
-|$namespace_edits[101]
-|$namespace_edits[110]
-|$namespace_edits[111]
-|$namespace_edits[112]
-|$namespace_edits[113]
-|$namespace_edits[114]
-|$namespace_edits[115]
-|$namespace_edits[116]
-|$namespace_edits[117]
-|$namespace_edits[118]
-|$namespace_edits[119]
-|$namespace_edits[120]
-|$namespace_edits[121]
-|l1=Main: $namespace_edits[0]
-|l2=Talk: $namespace_edits[1]
-|l3=User: $namespace_edits[2]
-|l4=User talk: $namespace_edits[3]
-|l5=Project: $namespace_edits[4]
-|l6=Project talk: $namespace_edits[5]
-|l7=File: $namespace_edits[6]
-|l8=File talk: $namespace_edits[7]
-|l9=MediaWiki: $namespace_edits[8]
-|l10=MediaWiki talk: $namespace_edits[9]
-|l11=Template: $namespace_edits[10]
-|l12=Template talk: $namespace_edits[11]
-|l13=Help: $namespace_edits[12]
-|l14=Help talk: $namespace_edits[13]
-|l15=Category: $namespace_edits[14]
-|l16=Category talk: $namespace_edits[15]
-|l17=Update: $namespace_edits[100]
-|l18=Update talk: $namespace_edits[101]
-|l19=Forum: $namespace_edits[110]
-|l20=Forum talk: $namespace_edits[111]
-|l21=Exchange: $namespace_edits[112]
-|l22=Exchange talk: $namespace_edits[113]
-|l23=Charm: $namespace_edits[114]
-|l24=Charm talk: $namespace_edits[115]
-|l25=Calculator: $namespace_edits[116]
-|l26=Calculator talk: $namespace_edits[117]
-|l27=Map: $namespace_edits[118]
-|l28=Map talk: $namespace_edits[119]
-|l29=Beta: $namespace_edits[120]
-|l30=Beta talk: $namespace_edits[121]
-}}
+$namespace_pie
 
 === Log events ===
 $pie
@@ -249,6 +289,19 @@ $pie
 * Total log entries: $logcount
 * Most used log type: $max
 
+=== Top 5 edited pages ===
+# [[$most_edited[0]]] at $times_edited[0] edits
+# [[$most_edited[1]]] at $times_edited[1] edits
+# [[$most_edited[2]]] at $times_edited[2] edits
+# [[$most_edited[3]]] at $times_edited[3] edits
+# [[$most_edited[4]]] at $times_edited[4] edits
+
+=== Top 5 edit summaries ===
+# <nowiki>'</nowiki>''<nowiki>$summary[0]</nowiki>''<nowiki>'</nowiki> was used $times_used[0] times.
+# <nowiki>'</nowiki>''<nowiki>$summary[1]</nowiki>''<nowiki>'</nowiki> was used $times_used[1] times.
+# <nowiki>'</nowiki>''<nowiki>$summary[2]</nowiki>''<nowiki>'</nowiki> was used $times_used[2] times.
+# <nowiki>'</nowiki>''<nowiki>$summary[3]</nowiki>''<nowiki>'</nowiki> was used $times_used[3] times.
+# <nowiki>'</nowiki>''<nowiki>$summary[4]</nowiki>''<nowiki>'</nowiki> was used $times_used[4] times.
+
 ";
-	
 $tybot->edit("User:TyBot/editreports/$target", $content, "Creating edit report for $target");

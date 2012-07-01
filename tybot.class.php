@@ -909,6 +909,7 @@ class tybot {
 				'list' => 'logevents',
 				'leuser' => $user,
 				'lelimit' => 'max',
+				'ucprop' => 'title|timestamp|comment|flags',
 				'lestart' => $lestart,
 				'format' => 'php'
 			);
