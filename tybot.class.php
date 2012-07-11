@@ -933,4 +933,43 @@ class tybot {
 			}
 		}
 	}
+	
+	public function get_all_wikia_wikis() {
+
+		if(!isset($from)) {
+			$from = 0;
+			$to = 1000;
+		}
+		
+		$fh = fopen("wikis.txt", 'w+');
+		while(true) {
+			$dataToPost = array(
+				'action' => 'query',
+				'format' => 'php',
+				'list' => 'wkdomains',
+				'wkfrom' => $from,
+				'wkto' => $to,
+				'wklimit' => 'max'
+			);
+			
+			$result = $this->post_to_wiki($dataToPost);
+			
+			var_dump($result);
+			
+			foreach($result["query"]["wkdomains"] as $y) {
+				$wikis[] = "http://" . $y["domain"] . "/api.php";
+				$id = $y["id"];
+				fwrite($fh, $y['domain'] . "\n");
+			}
+			
+			if(empty($result["query"]["wkdomains"])) {
+				return $wikis;
+			}
+			
+			$from = $id + 1;
+			$to = $from + 1000;
+		}
+		
+		fclose($fh);
+	}
 }

@@ -98,18 +98,53 @@
 		1202 => 'Message Wall Greeting' // Message Wall Greeting
 	);
 	
+	$logtypes = array(
+		'upload' => 0,
+		'delete' => 0,
+		'block' => 0,
+		'patrol' => 0,
+		'rights' => 0,
+		'move' => 0,
+		'newusers' => 0,
+		'useravatar' => 0,
+		'chatban' => 0,
+		'protect' => 0,
+		'abusefilter' => 0,
+		'import' => 0,
+		'merge' => 0,
+		'wikialabs' => 0,
+		'wikifeatures' => 0,
+	);
+	
+	$months = array(
+		"01" => 'January',
+		"02" => 'Febuary',
+		"03" => 'March',
+		"04" => 'April',
+		"05" => 'May',
+		"06" => 'June',
+		"07" => 'July',
+		"08" => 'August',
+		"09" => 'September',
+		10 => 'October',
+		11 => 'November',
+		12 => 'December'
+	);
+	
 	$titles = array();
 	$summaries = array();
 	$minor_edits = 0;
 	$new_pages = 0;
 	$no_summary = 0;
 	$top = 0;
-	$target = $tybot->get_page_content("User:TyBot/requests");
+	#$target = $tybot->get_page_content("User:TyBot/requests");
+	$target = $argv[1];
+	$target = ucfirst($target);
 	
 	$last_report = $tybot->get_user_contribs("TyBot",2,1,false);
 	
 	if(strpos($last_report[0]["title"], $target) !== false ) {
-		die("Their report was last\n");
+		#die("Their report was last\n");
 	} 
 	
 	$result = $tybot->login($user,$pass);
@@ -120,13 +155,31 @@
 	
 	$token["edit"] = $tybot->get_edit_token();
 	
-	print "Getting user contribs\n";
+	#print "Getting user contribs\n";
 	$contribs = $tybot->get_user_contribs($target);
 	
-	print "Analyzing contribs\n";
+	#print "Analyzing contribs\n";
 	foreach($contribs as $y) {
 		if (isset($y["minor"])) {
 			$minor_edits += 1;
+		}
+		
+		if(empty($month[substr($y['timestamp'], 5, 2)])) {
+			$month[substr($y['timestamp'], 5, 2)] = 1;
+		} else {
+			$month[substr($y['timestamp'], 5, 2)] += 1;
+		}
+		
+		if(empty($day[substr($y['timestamp'], 8, 2)])) {
+			$day[substr($y['timestamp'], 8, 2)] = 1;
+		} else {
+			$day[substr($y['timestamp'], 8, 2)] += 1;
+		}
+		
+		if(empty($year[substr($y['timestamp'], 0, 2)])) {
+			$year[substr($y['timestamp'], 0, 2)] = 1;
+		} else {
+			$year[substr($y['timestamp'], 0, 2)] += 1;
 		}
 		
 		if (isset($y["new"])) {
@@ -155,28 +208,10 @@
 		$namespace_edits[$y["ns"]] += 1;
 	}
 	
-	print "Getting log events\n";
+	#print "Getting log events\n";
 	$logevents = $tybot->get_log_events($target);
-	$logtypes = array(
-		'upload' => 0,
-		'delete' => 0,
-		'block' => 0,
-		'patrol' => 0,
-		'rights' => 0,
-		'move' => 0,
-		'newusers' => 0,
-		'useravatar' => 0,
-		'chatban' => 0,
-		'protect' => 0,
-		'abusefilter' => 0,
-		'import' => 0,
-		'merge' => 0,
-		'wikialabs' => 0,
-		'wikifeatures' => 0,
-		'pr_rep_log' => 0
-	);
 	
-	print "Processing log events\n";
+	#print "Processing log events\n";
 	foreach($logevents as $y) {
 		if(!isset($logtypes[$y["type"]])) {
 			$logtypes[$y["type"]] = 0;
@@ -187,12 +222,16 @@
 	
 	$editcount = count($contribs);
 	$logcount = count($logevents);
-	print "Edit count: " . $editcount . "\n";
-	print "Minor count: " . $minor_edits . "\n";
-	print "New pages: " . $new_pages . "\n";
-	print "Top: " . $top . "\n";
 	
-	print "Making pie charts\n";
+	if (($contribs == false) && ($logevents == false)) {
+		die("foo\n");
+	}
+	#print "Edit count: " . $editcount . "\n";
+	#print "Minor count: " . $minor_edits . "\n";
+	#print "New pages: " . $new_pages . "\n";
+	#print "Top: " . $top . "\n";
+	
+	#print "Making pie charts\n";
 	
 	/* Get top 5 pages */
 	for($counter=0;$counter<5;$counter+=1) {
@@ -212,12 +251,64 @@
 	}
 	/* END Get top 5 summaries */
 	
-	/* Make edit by namespace pie chart */
-	$max = array_keys($namespace_edits, max($namespace_edits));
-	$max = $max[0];
+	$namespace_pie = '';
+	$pie = '';
+	if(!$contribs == false) {
+		/* Make edit by day/month/year pie chart */
+		$max = array_keys($month, max($month));
+		$max = $max[0];
+		
+		$counter = 2;
+		$month_pie = "
+=== Edits by month ===
+{{Pie
+|size = 250
+|legend = yes
+|tot = $editcount
+|$month[$max]
+|l1 = $months[$max]: $month[$max]";
+		
+		unset($month[$max]);
+		
+		foreach($month as $y => $value) {
+			if($month[$y] === 0) {
+				unset($month[$y]); 
+			} else {
+				$month_pie .= "
+|$value
+|l" . $counter . " = $months[$y]: $value";				
+				$counter += 1;
+			}
+		}
+		$month_pie .= "}}";
+		/* END MONTH PIE */
+		
+		/* START DAY TABLE */
+		
+		$day_table = '
+=== Edits by day ===
+{|class="wikitable"
+!Day
+!Amount of edits';
+
+		foreach($day as $y => $value) {
+			$day_table .= "
+|-
+|$y
+|$value";
+		}
+		
+		$day_table .= "
+|}";
+		
+		/* Make edit by namespace pie chart */
+		$max = array_keys($namespace_edits, max($namespace_edits));
+		$max = $max[0];
 	
-	$counter = 2;
-$namespace_pie = "
+		$counter = 2;
+		$namespace_pie = "
+=== Edits by namespace === 
+
 {{Pie
 |size = 250
 |legend = yes
@@ -225,29 +316,34 @@ $namespace_pie = "
 |$namespace_edits[$max]
 |l1 = $namespace_names[$max]: $namespace_edits[$max]";
 
-unset($namespace_edits[$max]);
+		unset($namespace_edits[$max]);
 
-foreach($namespace_edits as $y => $value) {
-	if($namespace_edits[$y] === 0) {
-		unset($namespace_edits[$y]);
-	} else {
-		$namespace_pie.= "
+		foreach($namespace_edits as $y => $value) {
+			if($namespace_edits[$y] === 0) {
+				unset($namespace_edits[$y]);
+			} else {
+				$namespace_pie.= "
 |$namespace_edits[$y]
 |l" . $counter . " = $namespace_names[$y]: $value";
 		$counter += 1;
-	}
-}
-	$namespace_pie .= "}}";
+			}
+		}
+		$namespace_pie .= "}}";
 
-	/* End namespace pie chart */
+		/* End namespace pie chart */
+	}
 	
-	$max = array_keys($logtypes, max($logtypes));
+	if(!$logevents == false) {
 	
-	$max = $max[0];
+		$max = array_keys($logtypes, max($logtypes));
 	
-	/* Make the log events pie chart */
-	$counter = 2;
-$pie = "
+		$max = $max[0];
+	
+		/* Make the log events pie chart */
+		$counter = 2;
+		$pie = "
+=== Log events ===
+
 {{Pie
 |size=250
 |legend = yes
@@ -255,31 +351,33 @@ $pie = "
 |$logtypes[$max]
 |l1 = $max: $logtypes[$max]";
 
-unset($logtypes[$max]);
+	unset($logtypes[$max]);
 
-foreach($logtypes as $y => $value) {
-	$pie .= "
+	foreach($logtypes as $y => $value) {
+		$pie .= "
 |$logtypes[$y]
 |l" . $counter . " = $y: $value";
 
-	$counter += 1;
+		$counter += 1;
 
-}
+	}
 
-$pie .= "
+	$pie .= "
 }}";
-/* End log events pie chart */
-	
+	/* End log events pie chart */
+}
 	$content = 
 "
 == [[User:$target|$target]]'s Edit Report ==
 :''Last updated at ~~~~~''
 
-=== Edits by namespace === 
 $namespace_pie
 
-=== Log events ===
 $pie
+
+$month_pie
+
+$day_table
 
 === Stats ===
 * Edit count: $editcount
