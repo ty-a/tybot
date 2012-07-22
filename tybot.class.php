@@ -730,20 +730,39 @@ class tybot {
 	* Fixes double redirects
 	*
 	* @param none
-	* @return boolean based on success
+	* @return none
 	*/
-	public function fix_double_redirects() {
+	public function fix_double_redirects() { #@TODO Make it keep categories
 		$result = $this->query_page("DoubleRedirects");
 		
 		foreach($result["query"]["querypage"]["results"] as $y) {
-			$content = "#REDIRECT [[" . $y["databaseResult"]["tc"] . "]]";
+			#$content = "#REDIRECT [[" . $y["databaseResult"]["tc"] . "]]"; // Only compatible with 1.20
+			$content = $this->get_page_content($y["title"]); 
+			print $content . "\n";
 			
-			$result = $this->edit($y["title"], $content, "Fixing double redirect");
+			$start = strpos($content, "[[") + 2; 
+			$end = strpos($content, "]]"); 
+			$length = $end - $start; 
 			
-			if($result === false) {
-				return false;
-			} else { 
-				return true;
+			$OriginalTarget = substr($content, $start, $length); 
+			print "Page of 2nd redirect: " . $OriginalTarget . "\n";
+
+			$content = $this->get_page_content($OriginalTarget); 
+			
+			$start = strpos($content, "[[") + 2; 
+			$end = strpos($content, "]]"); 
+			$length = $end - $start; 
+			
+			if (stripos($content, "#REDIRECT") !== FALSE) {
+				$target = substr($content, $start, $length); 
+				
+				print "Final target: " . $target . "\n";
+			
+				$content = "#REDIRECT [[" . $target . "]]";			
+				print "Redirect not fixed \n";
+				$this->edit($y["title"], $content, "Fixing double redirect");
+			} else {
+				print "Redirect already fixed\n";
 			}
 		}
 	}
