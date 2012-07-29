@@ -4,10 +4,11 @@ TyBot
 The PHP wikibot framework named TyBot written by Wikia and Wikimedia user TyA.
 
 == Usage ==
+
 TyBot is written in PHP and tested on PHP v5.3. It is a CLI program. 
 
-Take the tybot.conf.blank.php and rename it to tybot.conf.php and then fill in the information the file asks for. 
+Fill in the information in the tybot.conf file 
 
-At the bottom of the file there is an area where you can write in the tasks you'd like it to do.
+Run the bot using php tybot.php
 
-You can then run it by going php tybot.conf.php
+This will provide you with the most up to date help info.
