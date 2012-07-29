@@ -39,11 +39,11 @@ class tybot {
 		$result = $this->post_to_wiki($dataToPost,$wiki);
 		
 		if ($result["login"]["result"] == "Success") {
-			print "Now logged in.\n";
+			#print "Now logged in.\n";
 			return true;
 		
 		} else {
-			print "Failed!";
+			#print "Failed!";
 			return false;
 		}
 		
@@ -740,9 +740,11 @@ class tybot {
 			$content = $this->get_page_content($y["title"]); 
 			print $content . "\n";
 			
+			
 			$start = strpos($content, "[[") + 2; 
 			$end = strpos($content, "]]"); 
 			$length = $end - $start; 
+			$extra_info = substr($content, $end + 2);
 			
 			$OriginalTarget = substr($content, $start, $length); 
 			print "Page of 2nd redirect: " . $OriginalTarget . "\n";
@@ -760,7 +762,7 @@ class tybot {
 			
 				$content = "#REDIRECT [[" . $target . "]]";			
 				print "Redirect not fixed \n";
-				$this->edit($y["title"], $content, "Fixing double redirect");
+				$this->edit($y["title"], $content . $extra_info, "Fixing double redirect");
 			} else {
 				print "Redirect already fixed\n";
 			}
@@ -990,5 +992,17 @@ class tybot {
 		}
 		
 		fclose($fh);
+	}
+	
+	public function check_alog($user) {
+	
+		global $curloptions,$useragent;
+		
+		$alog_page = "http://services.runescape.com/m=adventurers-log/rssfeed?searchName=" . $user;
+		
+		$result = file_get_contents($alog_page);
+		#var_dump($result);
+		
+		return $result;
 	}
 }
