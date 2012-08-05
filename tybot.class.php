@@ -1005,4 +1005,54 @@ class tybot {
 		
 		return $result;
 	}
+	
+	public function get_usergroups($user) {
+		
+		$dataToPost = array(
+			'action' => 'query',
+			'list' => 'allusers',
+			'aufrom' => $user,
+			'auprop' => 'groups',
+			'format' => 'php'
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		if(!empty($result['query']['allusers'][0]['groups'])) {
+			foreach($result['query']['allusers'][0]['groups'] as $y) {
+				$rights[] = $y;
+			}
+		} else {
+			$rights = 'none';
+			
+		}
+		return $rights;
+
+	}
+	
+	public function get_namespaces() {
+
+		$dataToPost = array(
+			'action' => 'query',
+			'meta' => 'siteinfo',
+			'siprop' => 'namespaces',
+			'format' => 'php'
+		);
+		
+		$result = $this->post_to_wiki($dataToPost);
+		#var_dump($result);
+		
+		foreach($result['query']['namespaces'] as $y) {
+			$namespaces[$y['id']] = $y['canonical'];
+		}
+		
+		$namespaces[0] = 'Main';
+		unset($namespaces[-2]);
+		unset($namespaces[-1]);
+		return $namespaces;
+			
+	
+	
+	}
 }

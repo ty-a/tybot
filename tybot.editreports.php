@@ -24,79 +24,7 @@
 	
 	/* BEGIN DIS STUFF */
 
-	$namespace_edits = array(
-		0 => 0, // main
-		1 => 0, // talk
-		2 => 0, // user
-		3 => 0, // user talk
-		4 => 0, // project 
-		5 => 0, // project talk
-		6 => 0, // file
-		7 => 0, // file talk
-		8 => 0, // MediaWiki
-		9 => 0, // MediaWiki talk
-		10 => 0, // Template
-		11 => 0, // Template talk
-		12 => 0, // Help
-		13 => 0, //Help talk
-		14 => 0, // Category
-		15 => 0, // Category talk
-		100 => 0, // Update
-		101 => 0, // Update talk
-		110 => 0, // Forum
-		111 => 0, // Forum talk
-		112 => 0, // Exchange
-		113 => 0, // Exchange talk
-		114 => 0, // Charm
-		115 => 0, // Charm talk
-		116 => 0, // Calculator 
-		117 => 0, // Calculator talk
-		118 => 0, // Map
-		119 => 0, // Map talk
-		120 => 0,  // Beta
-		121 => 0,  // Beta talk
-		1100 => 0, // RelatedVideos
-		1200 => 0, // Message Wall
-		1201 => 0, // Thread
-		1202 => 0 // Message Wall Greeting
-	);
-	
-	$namespace_names = array(
-		0 => 'Mainspace', // main
-		1 => 'Talk', // talk
-		2 => 'User', // user
-		3 => 'User talk', // user talk
-		4 => 'Project', // project 
-		5 => 'Project talk', // project talk
-		6 => 'File', // file
-		7 => 'File talk', // file talk
-		8 => 'MediaWiki', // MediaWiki
-		9 => 'MediaWiki talk', // MediaWiki talk
-		10 => 'Template', // Template
-		11 => 'Template talk', // Template talk
-		12 => 'Help', // Help
-		13 => 'Help talk', //Help talk
-		14 => 'Category', // Category
-		15 => 'Category talk', // Category talk
-		100 => 'Update', // Update
-		101 => 'Update talk', // Update talk
-		110 => 'Forum', // Forum
-		111 => 'Forum talk', // Forum talk
-		112 => 'Exchange', // Exchange
-		113 => 'Exchange talk', // Exchange talk
-		114 => 'Charm', // Charm
-		115 => 'Charm talk' , // Charm talk
-		116 => 'Calculator ', // Calculator 
-		117 => 'Calculator talk', // Calculator talk
-		118 => 'Map', // Map
-		119 => 'Map talk', // Map talk
-		120 => 'Beta',  // Beta
-		121 => 'Beta talk',  // Beta talk
-		1100 => 'RelatedVideos', // RelatedVideos
-		1200 => 'Message Wall', // Message Wall
-		1201 => 'Thread', // Thread
-		1202 => 'Message Wall Greeting' // Message Wall Greeting
-	);
+	$namespace_edits = array();
 	
 	$logtypes = array(
 		'upload' => 0,
@@ -118,7 +46,7 @@
 	
 	$months = array(
 		"01" => 'January',
-		"02" => 'Febuary',
+		"02" => 'February',
 		"03" => 'March',
 		"04" => 'April',
 		"05" => 'May',
@@ -137,15 +65,17 @@
 	$new_pages = 0;
 	$no_summary = 0;
 	$top = 0;
-	#$target = $tybot->get_page_content("User:TyBot/requests");
-	$target = $argv[1];
+	#$target = $tybot->get_page_content("User:$user/requests"); //based on request page
+	$target = $argv[1]; //commandline
 	$target = ucfirst($target);
 	
+	
+	/* Commenting out because unused, but has potiential to be used.
 	$last_report = $tybot->get_user_contribs("TyBot",2,1,false);
 	
 	if(strpos($last_report[0]["title"], $target) !== false ) {
-		#die("Their report was last\n");
-	} 
+		die("Their report was last\n");
+	} */
 	
 	$result = $tybot->login($user,$pass);
 	
@@ -154,6 +84,21 @@
 	}
 	
 	$token["edit"] = $tybot->get_edit_token();
+	
+	# get usergroups
+	$usergroups = $tybot->get_usergroups($target);
+
+	if(is_array($usergroups)) {
+		$groups = '';
+		foreach($usergroups as $y) {
+			$groups .= $y . " ";
+		}
+	} else {
+		$groups = "None";
+	}
+	
+	#get namespaces
+	$namespaces = $tybot->get_namespaces();
 	
 	#print "Getting user contribs\n";
 	$contribs = $tybot->get_user_contribs($target);
@@ -190,7 +135,7 @@
 			$no_summary += 1;
 		} else {
 			if(!isset($summaries[$y["comment"]])) {
-				$summaries[$y["comment"]] = 0;
+				$summaries[$y["comment"]] = 1;
 			}
 			
 			$summaries[$y["comment"]] += 1;
@@ -201,11 +146,16 @@
 		}
 		
 		if(!isset($titles[$y["title"]])) {
-			$titles[$y["title"]] = 0;
+			$titles[$y["title"]] = 1;
 		}
 		
 		$titles[$y["title"]] += 1;
-		$namespace_edits[$y["ns"]] += 1;
+		
+		if(isset($namespace_edits[$y["ns"]])) {
+			$namespace_edits[$y["ns"]] += 1;
+		} else {
+			$namespace_edits[$y["ns"]] = 1;
+		}
 	}
 	
 	#print "Getting log events\n";
@@ -287,7 +237,7 @@
 		
 		$day_table = '
 === Edits by day ===
-{|class="wikitable"
+{|class="wikitable sortable"
 !Day
 !Amount of edits';
 
@@ -314,7 +264,7 @@
 |legend = yes
 |tot = $editcount	
 |$namespace_edits[$max]
-|l1 = $namespace_names[$max]: $namespace_edits[$max]";
+|l1 = $namespaces[$max]: $namespace_edits[$max]";
 
 		unset($namespace_edits[$max]);
 
@@ -324,7 +274,7 @@
 			} else {
 				$namespace_pie.= "
 |$namespace_edits[$y]
-|l" . $counter . " = $namespace_names[$y]: $value";
+|l" . $counter . " = $namespaces[$y]: $value";
 		$counter += 1;
 			}
 		}
@@ -386,6 +336,7 @@ $day_table
 * Pages with current revision: $top
 * Total log entries: $logcount
 * Most used log type: $max
+* Usergroups: $groups
 
 === Top 5 edited pages ===
 # [[$most_edited[0]]] at $times_edited[0] edits
@@ -402,4 +353,4 @@ $day_table
 # <nowiki>'</nowiki>''<nowiki>$summary[4]</nowiki>''<nowiki>'</nowiki> was used $times_used[4] times.
 
 ";
-$tybot->edit("User:TyBot/editreports/$target", $content, "Creating edit report for $target");
+$tybot->edit("User:$user/editreports/$target", $content, "Creating edit report for $target");
