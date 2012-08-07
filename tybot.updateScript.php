@@ -23,6 +23,7 @@
 	/* Parameters */
 	$shortopts = 'f:';
 	$shortopts .= 'e:';
+	$shortopts .= 'l:';
 	
 	$options = getopt($shortopts);
 	
@@ -40,8 +41,14 @@
 	
 	$token['edit'] = $tybot->get_edit_token();
 	
-	if(!isset($options['e'])) {
-		$tybot->edit($options['f'], "<pre>\n" . $data, "Automated updating of script");
+	if(isset($options['l'])) {
+		$location = $options['l'];
 	} else {
-		$tybot->edit($options['f'], "<source lang=" . $options['e'] . ">\n" . $data, "Automated updating of script");
+		$location = $options['f'];
+	}
+	
+	if(!isset($options['e'])) {
+		$tybot->edit($location, "<pre>\n" . $data, "Automated updating of script");
+	} else {
+		$tybot->edit($location, "<source lang=" . $options['e'] . ">\n" . $data, "Automated updating of script");
 	}
