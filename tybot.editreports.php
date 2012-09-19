@@ -4,10 +4,10 @@
 	
 	$tybot = new tybot();
 
-	$user = "TyBot";
-	$pass = "";
-	$wiki = "";
-	$operator_email = "";
+	$user = "user";
+	$pass = "pass";
+	$wiki = "http://wiki/api.php";
+	$operator_email = "email";
 	
 	$version = "1.5.0";
 	$throttle = 0;
@@ -65,6 +65,7 @@
 	$new_pages = 0;
 	$no_summary = 0;
 	$top = 0;
+	$reverts = 0;
 	#$target = $tybot->get_page_content("User:$user/requests"); //based on request page
 	$target = $argv[1]; //commandline
 	$target = ucfirst($target);
@@ -91,11 +92,13 @@
 	if(is_array($usergroups)) {
 		$groups = '';
 		foreach($usergroups as $y) {
-			$groups .= $y . " ";
+			$groups .= $y . ", ";
 		}
 	} else {
 		$groups = "None";
 	}
+	
+	$groups = substr($groups, 0, -2);
 	
 	#get namespaces
 	$namespaces = $tybot->get_namespaces();
@@ -136,9 +139,9 @@
 		} else {
 			if(!isset($summaries[$y["comment"]])) {
 				$summaries[$y["comment"]] = 1;
+			} else {
+				$summaries[$y["comment"]] += 1;
 			}
-			
-			$summaries[$y["comment"]] += 1;
 		}
 		
 		if(isset($y["top"])) {
@@ -147,14 +150,18 @@
 		
 		if(!isset($titles[$y["title"]])) {
 			$titles[$y["title"]] = 1;
-		}
-		
-		$titles[$y["title"]] += 1;
+		} else {
+			$titles[$y["title"]] += 1;
+		}		
 		
 		if(isset($namespace_edits[$y["ns"]])) {
 			$namespace_edits[$y["ns"]] += 1;
 		} else {
 			$namespace_edits[$y["ns"]] = 1;
+		}
+		
+		if((strpos($y["comment"], "Undid revision ") !== false) || (strpos($y["comment"], "Reverted edits by ") !== false)) {
+			$reverts += 1;
 		}
 	}
 	
@@ -239,7 +246,7 @@
 === Edits by day ===
 {|class="wikitable sortable"
 !Day
-!Amount of edits';
+!Number of edits';
 
 		foreach($day as $y => $value) {
 			$day_table .= "
@@ -337,6 +344,7 @@ $day_table
 * Total log entries: $logcount
 * Most used log type: $max
 * Usergroups: $groups
+* Number of reverts: $reverts
 
 === Top 5 edited pages ===
 # [[$most_edited[0]]] at $times_edited[0] edits

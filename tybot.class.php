@@ -1010,17 +1010,17 @@ class tybot {
 		
 		$dataToPost = array(
 			'action' => 'query',
-			'list' => 'allusers',
-			'aufrom' => $user,
-			'auprop' => 'groups',
+			'list' => 'users',
+			'ususers' => $user,
+			'usprop' => 'groups',
 			'format' => 'php'
 		);
 		
 		$result = $this->post_to_wiki($dataToPost);
 		#var_dump($result);
 		
-		if(!empty($result['query']['allusers'][0]['groups'])) {
-			foreach($result['query']['allusers'][0]['groups'] as $y) {
+		if(!empty($result['query']['users'][0]['groups'])) {
+			foreach($result['query']['users'][0]['groups'] as $y) {
 				$rights[] = $y;
 			}
 		} else {
@@ -1051,8 +1051,6 @@ class tybot {
 		unset($namespaces[-2]);
 		unset($namespaces[-1]);
 		return $namespaces;
-			
-	
-	
+
 	}
 }
