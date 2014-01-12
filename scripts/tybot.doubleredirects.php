@@ -29,6 +29,7 @@ $curloptions = array(
     CURLOPT_POST => true
 );
 $tybot = new tybot();
+
 /** Login */
 $r = $tybot->login($user, $pass);
 
@@ -44,10 +45,11 @@ else
 
 /** Get edit token */
 $token = $tybot->get_token();
+
 /** Get list of double redirects */
 $r = $tybot->query_page("DoubleRedirects");
-/** Resolve redirects */
 
+/** Resolve redirects */
 foreach($r["query"]["querypage"]["results"] as $first)
   {
     $r = $tybot->get_page_content($first["title"]);
@@ -73,6 +75,6 @@ foreach($r["query"]["querypage"]["results"] as $first)
       }
     else
       {
-        print ("Redlink resolved!");
+        print ("Redlink resolved!\n");
       }
   }
