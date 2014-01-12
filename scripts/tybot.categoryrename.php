@@ -135,8 +135,8 @@ else
 function replace_category($page, $cont, $old, $new)
   {
     $tybot = new tybot();
-    $find = "[[$old]]";
-    $replace = "[[$new]]";
+    $find = "[[$old";
+    $replace = "[[$new";
     $content = str_replace($find, $replace, $cont);
     $r = $tybot->edit($page, $content, "Renaming category", 1);
     return $r;
