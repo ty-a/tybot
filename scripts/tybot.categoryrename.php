@@ -19,6 +19,7 @@ require_once ("../core/tybot.class.php");
 
 require_once ("../core/tybot.conf.php");
 
+$useragent = "TyBot category rename";
 $cookiefile = tempnam("/tmp", "CURLCOOKIE");
 $curloptions = array(
     CURLOPT_COOKIEFILE => $cookiefile,
@@ -135,8 +136,8 @@ else
 function replace_category($page, $cont, $old, $new)
   {
     $tybot = new tybot();
-    $find = "[[$old]]";
-    $replace = "[[$new]]";
+    $find = "[[$old";
+    $replace = "[[$new";
     $content = str_replace($find, $replace, $cont);
     $r = $tybot->edit($page, $content, "Renaming category", 1);
     return $r;
