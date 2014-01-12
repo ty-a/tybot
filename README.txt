@@ -21,3 +21,4 @@ The source code can be found online at https://github.com/ty-a/tybot
 
 == Contributors ==
 * TyA <tya.wiki@gmail.com>
+* Lil' Miss Rarity <cataclysmicpinkiepie64@gmail.com>
