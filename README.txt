@@ -1,8 +1,10 @@
-##TyBot
-###The PHP wikibot framework named TyBot written by Wikia and Wikimedia user TyA.
-***
+TyBot
+=====
 
-###Usage
+The PHP wikibot framework named TyBot written by Wikia and Wikimedia user TyA.
+
+== Usage ==
+
 TyBot is written in PHP and tested on PHP v5.3. It is a CLI program. 
 
 Fill in the information in the tybot.conf.php file 
@@ -19,3 +21,4 @@ The source code can be found online at https://github.com/ty-a/tybot
 
 == Contributors ==
 * TyA <tya.wiki@gmail.com>
+* Lil' Miss Rarity <cataclysmicpinkiepie64@gmail.com>
