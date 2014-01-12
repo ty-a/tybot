@@ -15,7 +15,7 @@
 *    You should have received a copy of the GNU General Public License
 *    along with TyBot (in PHP).  If not, see <http://www.gnu.org/licenses/>.
 */
-require_once ("./tybot.class.php");
+require_once ("../core/tybot.class.php");
 
 $tybot = new tybot();
 $user = "user";
