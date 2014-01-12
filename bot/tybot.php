@@ -61,11 +61,7 @@ if ($options['task'] != 'help')
     else
       {
         print "Now logged in.\n";
-        $token['edit'] = $tybot->get_edit_token();
-        $token['delete'] = $tybot->get_delete_token();
-        $token['protect'] = $tybot->get_protect_token();
-        $token['block'] = $tybot->get_block_token();
-        $token['unblock'] = $tybot->get_unblock_token();
+        $token = $tybot->get_token();
       }
   }
 
