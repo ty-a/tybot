@@ -19,6 +19,7 @@ require_once ("../core/tybot.class.php");
 
 require_once ("../core/tybot.conf.php");
 
+$useragent = "TyBot category rename";
 $cookiefile = tempnam("/tmp", "CURLCOOKIE");
 $curloptions = array(
     CURLOPT_COOKIEFILE => $cookiefile,
