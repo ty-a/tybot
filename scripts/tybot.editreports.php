@@ -91,7 +91,7 @@ if ($result = false)
     die("Login failed");
   }
 
-$token["edit"] = $tybot->get_edit_token();
+$token = $tybot->get_token();
 
 // get usergroups
 

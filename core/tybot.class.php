@@ -96,14 +96,14 @@ class tybot
       }
 
     /**
-     * function get_edit_token()
+     * function get_token()
      *
      * @param none
-     * @return the edit token
+     * @return the token
      */
     public
 
-    function get_edit_token()
+    function get_token()
       {
         $dataToPost = array(
             "action" => "query",
@@ -115,188 +115,10 @@ class tybot
         $result = $this->post_to_wiki($dataToPost);
         foreach($result["query"]["pages"] as $y)
           {
-            $token["edit"] = $y["edittoken"];
+            $token = $y["edittoken"];
           }
 
-        return $token["edit"];
-      }
-
-    /**
-     * function get_delete_token()
-     *
-     * Gets the delete token
-     *
-     * @param none
-     * @return the delete token
-     */
-    public
-
-    function get_delete_token()
-      {
-        $dataToPost = array(
-            "action" => "query",
-            "prop" => "info",
-            "intoken" => "delete",
-            "titles" => "Main Page",
-            "format" => "php"
-        );
-        $result = $this->post_to_wiki($dataToPost);
-        foreach($result["query"]["pages"] as $y)
-          {
-            $token["delete"] = $y["deletetoken"];
-          }
-
-        return $token["delete"];
-      }
-
-    /**
-     * function get_undelete_token()
-     *
-     * Gets the undelete token
-     *
-     * @param none
-     * @return the undelete token
-     */
-    public
-
-    function get_undelete_token()
-      {
-        $dataToPost = array(
-            "action" => "query",
-            "list" => "deletedrevs",
-            "drprop" => "token",
-            "format" => "php"
-        );
-        $result = $this->post_to_wiki($dataToPost);
-
-        // var_dump($result);
-
-        if (empty($result["error"]))
-          {
-            foreach($result["query"]["deletedrevs"] as $y)
-              {
-                $token["undelete"] = $y["token"];
-              }
-
-            return $token["undelete"];
-          }
-        else
-          {
-            print "ERROR: " . $result["error"]["code"] . "\n";
-            return false;
-          }
-      }
-
-    /**
-     * function get_userrights_token
-     *
-     * Gets the userrights token
-     *
-     * @param string $targetUser the user whose rights are being changed
-     * @return the userrights token
-     */
-    public
-
-    function get_userrights_token($targetUser)
-      {
-        $dataToPost = array(
-            "action" => "query",
-            "list" => "users",
-            "ususers" => $targetUser,
-            "ustoken" => "userrights",
-            "format" => "php"
-        );
-        $result = $this->post_to_wiki($dataToPost);
-        foreach($result["query"]["users"] as $y)
-          {
-            $token["userrights"] = $y["userrightstoken"];
-          }
-
-        return $token["userrights"];
-      }
-
-    /**
-     * function get_protect_token()
-     *
-     * Gets the protect token
-     *
-     * @param none
-     * @return the protect token
-     */
-    public
-
-    function get_protect_token()
-      {
-        $dataToPost = array(
-            "action" => "query",
-            "prop" => "info",
-            "intoken" => "protect",
-            "titles" => "Main Page",
-            "format" => "php"
-        );
-        $result = $this->post_to_wiki($dataToPost);
-        foreach($result["query"]["pages"] as $y)
-          {
-            $token["protect"] = $y["protecttoken"];
-          }
-
-        return $token["protect"];
-      }
-
-    /**
-     * function get_block_token()
-     *
-     * Gets the block token
-     *
-     * @param none
-     * @return the block token
-     */
-    public
-
-    function get_block_token()
-      {
-        $dataToPost = array(
-            'action' => 'query',
-            'prop' => 'info',
-            'intoken' => 'block',
-            'titles' => 'User:Foo',
-            'format' => 'php'
-        );
-        $result = $this->post_to_wiki($dataToPost);
-        foreach($result["query"]["pages"] as $y)
-          {
-            $token["block"] = $y["blocktoken"];
-          }
-
-        return $token["block"];
-      }
-
-    /**
-     * function get_unblock_token()
-     *
-     * Gets the unblock token
-     *
-     * @param none
-     * @return the unblock token
-     */
-    public
-
-    function get_unblock_token()
-      {
-        $dataToPost = array(
-            'action' => 'query',
-            'prop' => 'info',
-            'intoken' => 'unblock',
-            'titles' => 'User:Foo',
-            'format' => 'php'
-        );
-        $result = $this->post_to_wiki($dataToPost);
-        foreach($result["query"]["pages"] as $y)
-          {
-            $token["unblock"] = $y["unblocktoken"];
-          }
-
-        return $token["unblock"];
+        return $token;
       }
 
     /**
@@ -354,7 +176,7 @@ class tybot
             "summary" => $summary,
             "text" => $text,
             "bot" => $bot,
-            "token" => $token["edit"],
+            "token" => $token,
             "format" => "php"
         );
         echo "Sleeping for $throttle seconds.\n";
@@ -393,7 +215,7 @@ class tybot
             "title" => $page,
             "reason" => $summary,
             "format" => "php",
-            "token" => $token["delete"]
+            "token" => $token
         );
         $result = $this->post_to_wiki($dataToPost);
 
@@ -429,7 +251,7 @@ class tybot
             'title' => $page,
             'reason' => $summary,
             'format' => 'php',
-            'token' => $token["undelete"]
+            'token' => $token
         );
         $result = $this->post_to_wiki($dataToPost);
 
@@ -509,7 +331,7 @@ class tybot
             'protections' => 'edit=' . $editlevel . '|move=' . $movelevel,
             'expiry' => $expiry,
             'reason' => $summary,
-            'token' => $token['protect'],
+            'token' => $token,
             'format' => 'php'
         );
         $result = $this->post_to_wiki($dataToPost);
@@ -547,7 +369,7 @@ class tybot
             'user' => $target,
             'reason' => $summary,
             'expiry' => $expiry,
-            'token' => $token["block"],
+            'token' => $token,
             'format' => 'php'
         );
         $result = $this->post_to_wiki($dataToPost);
@@ -580,7 +402,7 @@ class tybot
             'action' => 'unblock',
             'user' => $target,
             'reason' => $summary,
-            'token' => $token["unblock"],
+            'token' => $token,
             'format' => 'php'
         );
         $result = $this->post_to_wiki($dataToPost);

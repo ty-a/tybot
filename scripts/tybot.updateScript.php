@@ -50,7 +50,7 @@ if ($login === false)
   }
 
 $data = file_get_contents($options['f']);
-$token['edit'] = $tybot->get_edit_token();
+$token = $tybot->get_token();
 
 if (isset($options['l']))
   {
