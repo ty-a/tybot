@@ -1,7 +1,6 @@
 <?php
 ##########################################################################
-#    This file is a part of Alyssa in PHP
-#    Copyright (C) 2013  Benjamin Williams <peanutbutter.mint@yahoo.com>
+#    This file is a part of Tybot in PHP
 #
 #    This program is free software: you can redistribute it and/or modify
 #    it under the terms of the GNU General Public License as published by
