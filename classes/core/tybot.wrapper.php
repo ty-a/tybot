@@ -471,7 +471,86 @@ class Tybot {
         }
             
     }
-    
+
+	################################################
+	# Protect - Protects a page from editing/moving
+	#
+	# Returns - True or false
+	#
+	# Arguments - string[$page] string[$movelevel]
+	#			  string[$editlevel] string[$expiry]
+	#             string[$summary]
+	################################################
+	public function protect($page, $movelevel="", $editlevel="", $expiry="", $summary="") {
+
+		global $token;
+
+		#Set up data for api post
+		$data = array(
+			"action" => "protect",
+			"title" => $page,
+			"protections" => "edit=$editlevel|move=$movelevel",
+			"expiry" => $expiry,
+			"format" => "php",
+			"token" => $token
+		);
+
+		#Send request and grab result
+		$result = $this->post($data);
+
+		#Check for errors
+		if (empty($result["error"])) {
+
+			return true;
+
+		} else {
+
+			print("ERROR: " . $result["error"]["code"] . "\n");
+
+			return false;
+
+		}
+
+	}
+
+	############################################
+	# Undelete - Undeletes a page
+	#
+	# Returns - True or false
+	#
+	# Arguments - string[$page] string[$summary]
+	############################################
+	public function undelete($page, $summary="") {
+
+		global $token;
+
+		#Set up data for api post
+		$data = array(
+			"action" => "undelete",
+			"title" => $page,
+			"reason" => $summary,
+			"format" => "php",
+			"token" => $token
+		);
+
+		#Send request and grab result
+		$result = $this->post($data);
+	
+		#Check for errors
+		if (empty($result["error"])) {
+
+			return true;
+
+		} else {
+
+			print("ERROR: " . $result["error"]["code"] . "\n");
+
+			return false;
+
+		}
+
+	}
+
     #######################
     ###   END ACTIONS   ###
     #######################
