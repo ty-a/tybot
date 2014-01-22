@@ -390,53 +390,6 @@ class Tybot {
 
     }
 
-    ###########################################
-    # Edit - Edits a page
-    #
-    # Returns - true or error
-    #
-    # Arguments - string[$page] string[$text] 
-    #             string[$summary] string[type] 
-    #             int[$bot]
-    ###########################################
-    public function edit($page, $text, $summary = '', $bot = 1, $type="") {
-    	
-        global $token, $throttle;
-    	
-        #set up data for api post
-        $data = array(
-            "action" => "edit",
-            "title" => $page,
-            "summary" => $summary,
-            $type . "text" => $text,
-            "bot" => $bot,
-            "token" => $token,
-            "format" => "php"
-        );
-        
-        #Pause program (throttle)
-        print("Throttling...");
-        
-        sleep($throttle);
-        
-        #Send request and grab result
-        $result = $this->post($data);
-
-        #Check to see if edit was successful
-        if (empty($result["error"])) {
-                
-            return true;
-            
-        } else {
-                
-            print("ERROR: " . $result["error"]["code"] . "\n");
-            
-            return false;
-            
-        }
-        
-    }
-    
     ############################################
     # Delete - deletes a page from the wiki
     #
@@ -473,6 +426,53 @@ class Tybot {
             
         }
     	
+    }
+    
+    ###########################################
+    # Edit - Edits a page
+    #
+    # Returns - true or error
+    #
+    # Arguments - string[$page] string[$text] 
+    #             string[$summary] string[type] 
+    #             int[$bot]
+    ###########################################
+    public function edit($page, $text, $summary="", $bot=1, $type="") {
+    	
+        global $token, $throttle;
+    	
+        #set up data for api post
+        $data = array(
+            "action" => "edit",
+            "title" => $page,
+            "summary" => $summary,
+            $type . "text" => $text,
+            "bot" => $bot,
+            "token" => $token,
+            "format" => "php"
+        );
+        
+        #Pause program (throttle)
+        print("Throttling...");
+        
+        sleep($throttle);
+        
+        #Send request and grab result
+        $result = $this->post($data);
+
+        #Check to see if edit was successful
+        if (empty($result["error"])) {
+                
+            return true;
+            
+        } else {
+                
+            print("ERROR: " . $result["error"]["code"] . "\n");
+            
+            return false;
+            
+        }
+        
     }
     
     #########################################
