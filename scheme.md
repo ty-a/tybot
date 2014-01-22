@@ -16,17 +16,18 @@ also be class methods.
 
 Diagram
 =======
-
+```
          Layer 1
 		    |
 	   	 Layer 2
 	  ______|_______
 	  |            |
    Layer 3      Layer 4
-
+```
 
 Layer 3 ex.
 ===========
+```
 class Edit extends Tybot {
 
     public function init($page) {
@@ -36,3 +37,5 @@ class Edit extends Tybot {
     }
 
 }
+```
+
