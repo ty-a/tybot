@@ -22,6 +22,17 @@
 class Tybot {
 
     ##############################
+    ###   CURL-LIB VARIABLES   ###
+    ##############################
+    public $curloptions = array(
+        CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
+        CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
+        CURLOPT_RETURNTRANSFER = true,
+        CURLOPT_USERAGENT = "tybot-4.0",
+        CURLOPT_POST = true
+    );
+
+    ##############################
     ###   START CORE ACTIONS   ###
     ##############################
 
@@ -34,14 +45,13 @@ class Tybot {
     ######################################
     public function post($data) {
     
-        global $curloptions, 
-               $wiki;
+        global $wiki;
         
         #Initialize Curl
         $ch = curl_init();
         
         #Define options
-        curl_setopt_array($ch, $curloptions);
+        curl_setopt_array($ch, $this-> $curloptions);
         
         curl_setopt($ch, CURLOPT_URL, $wiki);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
@@ -340,6 +350,46 @@ class Tybot {
     ###   START ACTIONS   ###
     #########################
     
+    ##############################################
+    # Block - Block a user from the wiki
+    #
+    # Returns - True or false
+    #
+    # Arguments - string[$target] string[$summary]
+    #             string[$expiry]
+    ##############################################
+    public function block($target, $summary="", $expiry="indefinite") {
+
+        global $token;
+
+        #Set up data for post
+        $data = array(
+            "action" => "block",
+            "user" => "target",
+            "reason" => $summary,
+            "expiry" => $expiry,
+            "format" => "php",
+            "token" => $token
+        );
+
+        #Send request and grab result
+        $result = $this->post($data);
+
+        #Check for errors
+        if (empty($result["error"])) {
+
+            return true;
+
+        } else {
+
+            print("ERROR: " . $result["error"]["code"] . "\n");
+
+            return false;
+
+        }
+
+    }
+
     ###########################################
     # Edit - Edits a page
     #
@@ -513,10 +563,48 @@ class Tybot {
 
     }
 
+    ##############################################
+    # Unblock - Unblocks a user from a wiki
+    #
+    # Returns - True or False
+    #
+    # Arguments - string[$target] string[$summary]
+    ##############################################
+    public function unblock($target, $summary="") {
+
+        global $token;
+
+        #Set up data for api post
+        $data = array(
+            "action" => "unblock",
+            "user" => $target,
+            "reason" => $summary,
+            "format" => "php",
+            "token" => $token
+        );
+
+        #Send request and grab result
+        $result = $this->post($data);
+
+        #Check for errors
+        if (empty($result["error"])) {
+
+            return true;
+
+        } else {
+
+            print("ERROR: " . $result["error"]["code"] . "\n");
+
+            return false;
+
+        }
+
+    }
+
     ############################################
     # Undelete - Undeletes a page
     #
-    # Returns - True or false
+    # Returns - True or False
     #
     # Arguments - string[$page] string[$summary]
     ############################################
