@@ -19,7 +19,7 @@
 #############################################
 # Wrapper to interface with the MediaWiki API
 #############################################
-class tybot {
+class Tybot {
 
     ##############################
     ###   START CORE ACTIONS   ###
