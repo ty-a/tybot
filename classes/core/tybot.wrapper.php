@@ -472,84 +472,84 @@ class Tybot {
             
     }
 
-	################################################
-	# Protect - Protects a page from editing/moving
-	#
-	# Returns - True or false
-	#
-	# Arguments - string[$page] string[$movelevel]
-	#			  string[$editlevel] string[$expiry]
-	#             string[$summary]
-	################################################
-	public function protect($page, $movelevel="", $editlevel="", $expiry="", $summary="") {
+    ################################################
+    # Protect - Protects a page from editing/moving
+    #
+    # Returns - True or false
+    #
+    # Arguments - string[$page] string[$movelevel]
+    #			  string[$editlevel] string[$expiry]
+    #             string[$summary]
+    ################################################
+    public function protect($page, $movelevel="", $editlevel="", $expiry="", $summary="") {
 
-		global $token;
+        global $token;
 
-		#Set up data for api post
-		$data = array(
-			"action" => "protect",
-			"title" => $page,
-			"protections" => "edit=$editlevel|move=$movelevel",
-			"expiry" => $expiry,
-			"format" => "php",
-			"token" => $token
-		);
+        #Set up data for api post
+        $data = array(
+            "action" => "protect",
+            "title" => $page,
+            "protections" => "edit=$editlevel|move=$movelevel",
+            "expiry" => $expiry,
+            "format" => "php",
+            "token" => $token
+        );
 
-		#Send request and grab result
-		$result = $this->post($data);
+        #Send request and grab result
+        $result = $this->post($data);
 
-		#Check for errors
-		if (empty($result["error"])) {
+        #Check for errors
+        if (empty($result["error"])) {
 
-			return true;
+            return true;
 
-		} else {
+        } else {
 
-			print("ERROR: " . $result["error"]["code"] . "\n");
+            print("ERROR: " . $result["error"]["code"] . "\n");
 
-			return false;
+            return false;
 
-		}
+        }
 
-	}
+    }
 
-	############################################
-	# Undelete - Undeletes a page
-	#
-	# Returns - True or false
-	#
-	# Arguments - string[$page] string[$summary]
-	############################################
-	public function undelete($page, $summary="") {
+    ############################################
+    # Undelete - Undeletes a page
+    #
+    # Returns - True or false
+    #
+    # Arguments - string[$page] string[$summary]
+    ############################################
+    public function undelete($page, $summary="") {
 
-		global $token;
+        global $token;
 
-		#Set up data for api post
-		$data = array(
-			"action" => "undelete",
-			"title" => $page,
-			"reason" => $summary,
-			"format" => "php",
-			"token" => $token
-		);
+        #Set up data for api post
+        $data = array(
+            "action" => "undelete",
+            "title" => $page,
+            "reason" => $summary,
+            "format" => "php",
+            "token" => $token
+        );
 
-		#Send request and grab result
-		$result = $this->post($data);
+        #Send request and grab result
+        $result = $this->post($data);
 	
-		#Check for errors
-		if (empty($result["error"])) {
+        #Check for errors
+        if (empty($result["error"])) {
 
-			return true;
+            return true;
 
-		} else {
+        } else {
 
-			print("ERROR: " . $result["error"]["code"] . "\n");
+            print("ERROR: " . $result["error"]["code"] . "\n");
 
-			return false;
+            return false;
 
-		}
+        }
 
-	}
+    }
 
     #######################
     ###   END ACTIONS   ###
