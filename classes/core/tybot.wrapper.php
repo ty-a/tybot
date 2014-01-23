@@ -51,7 +51,7 @@ class Tybot {
         $ch = curl_init();
         
         #Define options
-        curl_setopt_array($ch, $this-> $curloptions);
+        curl_setopt_array($ch, $this->$curloptions);
         
         curl_setopt($ch, CURLOPT_URL, $wiki);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
