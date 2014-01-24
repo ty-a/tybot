@@ -250,22 +250,32 @@ class Tybot {
         $result = $this->post($data);
 
         #Check if result is empty
-        if (empty($result["error"])) {
+        if (!empty($result)) {
+
+            if (empty($result["error"])) {
         	
-            foreach($result["query"]["allusers"] as $u) {
+                foreach($result["query"]["allusers"] as $u) {
             	
-                $users[] = $u["name"];
+                    $users[] = $u["name"];
                 
+                }
+
+                return $users;
+            
+            } else {
+        	
+                print("ERROR: " . $result["error"]["code"] . "\n");
+            
+                return false;
+            
             }
 
-            return $users;
-            
         } else {
-        	
-            print("ERROR: " . $result["error"]["code"] . "\n");
-            
+
+            print("ERROR: No result recieved!\n");
+
             return false;
-            
+        
         }
     	
     }
@@ -291,25 +301,80 @@ class Tybot {
         #Post request and grab result
         $result = $this->post($data);
         
-        #Iterate through results only if there are any 
-        if (!empty($result["query"]["users"][0]["groups"])) {
+        #Iterate through results only if there are any
+        if (!empty($result)) {
+
+            if (!empty($result["query"]["users"][0]["groups"])) {
             
-            foreach($result["query"]["users"][0]["groups"] as $r) {
+                foreach($result["query"]["users"][0]["groups"] as $r) {
                 
-                $rights[] = $r;
+                    $rights[] = $r;
                 
+                }
+            
+            } else {
+            
+                $rights = "none";
+            
             }
-            
+
+            return $rights;
+        
         } else {
-            
-            $rights = "none";
-            
+
+            print("ERROR: No result recieved!\n");
+
+            return false;
+
         }
 
-        return $rights;
-        
     }
-    
+
+    ####################################################
+    # Special Page - Get the contents from special pages
+    #
+    # Returns - Array or false
+    #
+    # Arguments - srtring[$type] int[$limit]
+    ####################################################
+    public function special_page($type, $limit="") {
+
+        #Set up data for query
+        $data = array(
+            "action" => "query",
+            "list" => "querypage",
+            "qptype" => $type,
+            "qplimit" => $limit,
+            "type" => "php"
+        );
+        
+        #Send query and grab the result
+        $result = $this->post($data);
+
+        if (!empty($result)) {
+
+            if (empty($result["error"])) {
+
+                return $result;
+
+            } else {
+
+                print("ERROR: " . $result["error"]["code"] . "\n");
+
+                return false;
+
+            }
+
+        } else {
+
+            print("ERROR: No result recieved!\n");
+
+            return false;
+
+        }
+
+    }
+
     ###############################
     # Token - grabs the edit token
     #
@@ -332,13 +397,23 @@ class Tybot {
         $result = $this->post($data);
         
         #Iterate through result and grab token
-        foreach($result["query"]["pages"] as $p) {
-        
-            $token = $p["edittoken"];
-            
-        }
+        if (!empty($result)) {
 
-        return $token;
+            foreach($result["query"]["pages"] as $p) {
+        
+                $token = $p["edittoken"];
+            
+            }
+
+            return $token;
+
+        } else {
+
+            print("ERROR: No result recieved!\n");
+
+            return false;
+
+        }
     
     }
 
