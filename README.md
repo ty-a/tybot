@@ -1,31 +1,15 @@
-TyBot
-=====
+# Tybot
 
-The PHP wikibot framework named TyBot written by Wikia and Wikimedia user TyA.
+Tybot is a CLI bot program written in PHP by Wikia/Wikimedia user TyA and Wikia user Lil' Miss Rarity.
 
-### Usage
+## About
 
-TyBot is written in PHP and tested on PHP v5.3. It is a CLI program. 
+Tybot is written in PHP and tested on PHP v5.3.* and is not garunteed to work on other versions.
 
-Fill in the information in the tybot.conf.php file 
+This software is licensed under the GNU General Public License version 3. You should have recieved a copy of the license in the info folder. If not, you may visit the GNU website to obtain a copy.
 
-Run the bot using php tybot.php
+Tybot is currently undergoing a complete rewrite and is not ready for use. It is recomended that you wait until version 4 is finished and released before use. Durring this rewrite a lot of canges are expected and nothing is garaunteed to stay the same.
 
-This will provide you with the most up to date help info.
-
-### License
-
-This program is licensed under the GNU General Public License (GPL) version 3. The full text of the license can be found in the "LICENSE" file provided in the source code.
-
-### Source Code
-
-The source code can be found online at https://github.com/ty-a/tybot
-
-### Current Task
-
-Rebuilding software from the ground up.
-
-### Contributors
-
-* TyA <tya.wiki@gmail.com>
-* Lil' Miss Rarity <cataclysmicpinkiepie64@gmail.com>
+## Contributors
+* [TyA](http://community.wikia.com/wiki/User:TyA)
+* [Lil' Miss Rarity](http://community.wikia.com/wiki/User:Lil'_Miss_Rarity)
