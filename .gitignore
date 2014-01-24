@@ -1,3 +1,7 @@
 #Config file
 tybot.editreports2.php
 wikis.txt
+
+#Vim files
+*.swp
+*.swo
