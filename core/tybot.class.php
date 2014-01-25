@@ -31,6 +31,11 @@ class Tybot {
         CURLOPT_USERAGENT = "tybot-4.0",
         CURLOPT_POST = true
     );
+    
+    #################
+    ###   TOKEN   ###
+    ################# 
+    public $token;
 
     ##############################
     ###   START CORE ACTIONS   ###
@@ -74,24 +79,21 @@ class Tybot {
     ###   START QUERIES   ###
     #########################
       
-    #######################################################
-    # Cat_memb - Get the titles of every page in a category
+    ###############################################################
+    # Category Members - Get the titles of every page in a category
     #
-    # Returns - array of page titles
+    # Returns - An array of page titles or false
     #
     # Arguments - string[$cat] int[$limit]
-    #######################################################
-    public function cat_memb($cat, $limit="max") {
+    ###############################################################
+    public function categoryMembers($cat, $limit="max") {
     	
         $cmcontinue = '';
     	
-        #Initial operation loop
         while (true) {
         	
-            #Check if this is first query
             if ($cmcontinue === '') {
             	
-                #Set up data for API query
                 $data = array(
                     "action" => "query",
                     "list" => "categorymembers",
@@ -103,7 +105,6 @@ class Tybot {
                 
             } else {
             	
-                #Set up data for API query
                 $data = array(
                     "action" => "query",
                     "list" => "categorymembers",
@@ -116,10 +117,8 @@ class Tybot {
                 
             }
 
-            #Send request and grab result
             $result = $this->post($data);
 
-            #Check for query errors
             if (!empty($result["error"])) {
             	
                 print("ERROR: " . $result["error"]["code"] . "\n");
@@ -128,22 +127,18 @@ class Tybot {
                 
             }
 
-            #Iterate through result and add title to array
-            #Iterate sounds sounds much more intelligent
             foreach($result["query"]["categorymembers"] as $t) {
             	
                 $pages[] = $t["title"];
                 
             }
 
-            #Check if there are more results
             if (empty($result["query-continue"])) {
             	
                 return $pages;
                 
             } else {
-            	
-            	#Continue loop
+
                 $cmcontinue = $result["query-continue"]["categorymembers"]["cmcontinue"];
                 
             }
@@ -152,30 +147,25 @@ class Tybot {
         
     }
     
-    ####################################
-    # Content - get contents of a page
+    #################################################
+    # Page Content - Gets the text contents of a page
     #
-    # Returns - the text content of page
+    # Returns - The page content or false
     #
     # Arguments - string[$title]
-    ####################################
-    public function content($title) {
+    #################################################
+    public function pageContent($title) {
 
-        #Set data for api query
         $data = array(
-	    "action" => "query",
+	        "action" => "query",
             "format" => "php",
             "prop" => "revisions",
             "rvprop" => "content",
             "titles" => $title
         );
 
-        #Post request and grab result
         $result = $this->post($data);
 
-        #Iterate through result and grab content
-        #If there is no content present it will
-        #return an empty string
         foreach($result["query"]["pages"] as $r) {
 
             if (isset($r["revisions"][0]["*"])) {
@@ -192,17 +182,16 @@ class Tybot {
 	    
     }
     
-    #############################################################
-    # Get_special - Get results from a special page (maintenence)
+    ####################################################################
+    # Query Special Page - Get results from a special page (maintenence)
     #
-    # Returns - an array of titles
+    # Returns - Array of page contents or false
     #
     # Arguments - string[$page] int[$amount]
-    #############################################################
-    public function get_special($page, $limit="") {
+    ####################################################################
+    public function querySpecialPage($page, $limit="") {
     	
-        #Set up data for api query
-        $dataToPost = array(
+        $data = array(
             "action" => "query",
             "list" => "querypage",
             "qppage" => $page,
@@ -210,10 +199,8 @@ class Tybot {
             "format" => "php"
         );
         
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check if our result was empty
         if (empty($result["error"])) {
         	
             return $result;
@@ -236,8 +223,7 @@ class Tybot {
     # Arguments - string[$group] int[amount]
     ############################################################
     public function group($group, $amount="max") {
-    	
-        #Set up data for api query
+        
         $data = array(
             "action" => "query",
             "list" => "allusers",
@@ -246,36 +232,24 @@ class Tybot {
             "format" => "php",
         );
         
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check if result is empty
-        if (!empty($result)) {
-
-            if (empty($result["error"])) {
+        if (empty($result["error"])) {
         	
-                foreach($result["query"]["allusers"] as $u) {
+            foreach($result["query"]["allusers"] as $u) {
             	
-                    $users[] = $u["name"];
+                $users[] = $u["name"];
                 
-                }
-
-                return $users;
-            
-            } else {
-        	
-                print("ERROR: " . $result["error"]["code"] . "\n");
-            
-                return false;
-            
             }
 
+            return $users;
+            
         } else {
-
-            print("ERROR: No result recieved!\n");
-
+        	
+            print("ERROR: " . $result["error"]["code"] . "\n");
+            
             return false;
-        
+            
         }
     	
     }
@@ -289,7 +263,6 @@ class Tybot {
     ########################################
     public function rights($user) {
         
-        #Set up data for api query
         $data = array(
             "action" => "query",
             "list" => "users",
@@ -298,93 +271,36 @@ class Tybot {
             "format" => "php"
         );
         
-        #Post request and grab result
         $result = $this->post($data);
-        
-        #Iterate through results only if there are any
-        if (!empty($result)) {
 
-            if (!empty($result["query"]["users"][0]["groups"])) {
+        if (!empty($result["query"]["users"][0]["groups"])) {
             
-                foreach($result["query"]["users"][0]["groups"] as $r) {
                 
-                    $rights[] = $r;
+            foreach($result["query"]["users"][0]["groups"] as $r) {
                 
-                }
-            
-            } else {
-            
-                $rights = "none";
-            
+                $rights[] = $r;
+                
             }
-
-            return $rights;
-        
+            
         } else {
-
-            print("ERROR: No result recieved!\n");
-
-            return false;
-
+            
+            $rights = "none";
+            
         }
+
+        return $rights;
 
     }
 
-    ####################################################
-    # Special Page - Get the contents from special pages
+    #######################################
+    # Token - Grabs the edit token
     #
-    # Returns - Array or false
-    #
-    # Arguments - srtring[$type] int[$limit]
-    ####################################################
-    public function special_page($type, $limit="") {
-
-        #Set up data for query
-        $data = array(
-            "action" => "query",
-            "list" => "querypage",
-            "qptype" => $type,
-            "qplimit" => $limit,
-            "type" => "php"
-        );
-        
-        #Send query and grab the result
-        $result = $this->post($data);
-
-        if (!empty($result)) {
-
-            if (empty($result["error"])) {
-
-                return $result;
-
-            } else {
-
-                print("ERROR: " . $result["error"]["code"] . "\n");
-
-                return false;
-
-            }
-
-        } else {
-
-            print("ERROR: No result recieved!\n");
-
-            return false;
-
-        }
-
-    }
-
-    ###############################
-    # Token - grabs the edit token
-    #
-    # Returns - the recieved token
+    # Returns - The recieved token or false
     #
     # Arguments - none
-    ###############################
+    #######################################
     public function token() {
     
-        #Set data for api query
         $data = array(
             "action" => "query",
             "prop" => "info|revisions",
@@ -393,11 +309,9 @@ class Tybot {
             "format" => "php"
         );
         
-        #Post request and grab result
         $result = $this->post($data);
-        
-        #Iterate through result and grab token
-        if (!empty($result)) {
+    
+        if (empty($result["error"])) {
 
             foreach($result["query"]["pages"] as $p) {
         
@@ -408,8 +322,6 @@ class Tybot {
             return $token;
 
         } else {
-
-            print("ERROR: No result recieved!\n");
 
             return false;
 
@@ -435,22 +347,17 @@ class Tybot {
     ##############################################
     public function block($target, $summary="", $expiry="indefinite") {
 
-        global $token;
-
-        #Set up data for post
         $data = array(
             "action" => "block",
             "user" => "target",
             "reason" => $summary,
             "expiry" => $expiry,
             "format" => "php",
-            "token" => $token
+            "token" => $this->$token
         );
 
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check for errors
         if (empty($result["error"])) {
 
             return true;
@@ -468,27 +375,22 @@ class Tybot {
     ############################################
     # Delete - deletes a page from the wiki
     #
-    # Returns - boolean 
+    # Returns - true or false 
     #
     # Arguments - string[$page] string[$summary]
     ############################################
     public function delete($page, $summary="") {
     	
-        global $token;
-    	
-        #Set up data to post to api
-        $dataToPost = array(
+        $data = array(
             "action" => "delete",
             "title" => $page,
             "reason" => $summary,
             "format" => "php",
-            "token" => $token
+            "token" => $this->$token
         );
         
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check result and return a boolean
         if (empty($result["error"])) {
         	
             return true;
@@ -506,36 +408,30 @@ class Tybot {
     ###########################################
     # Edit - Edits a page
     #
-    # Returns - true or error
+    # Returns - true or false
     #
     # Arguments - string[$page] string[$text] 
-    #             string[$summary] string[type] 
-    #             int[$bot]
+    #             string[$summary] int[$bot] 
+    #             int[$throttle]
     ###########################################
-    public function edit($page, $text, $summary="", $bot=1, $type="") {
+    public function edit($page, $text, $summary="", $bot=1, $throttle=1) {
     	
-        global $token, $throttle;
-    	
-        #set up data for api post
         $data = array(
             "action" => "edit",
             "title" => $page,
             "summary" => $summary,
-            $type . "text" => $text,
+            "text" => $text,
             "bot" => $bot,
-            "token" => $token,
+            "token" => $this->$token,
             "format" => "php"
         );
         
-        #Pause program (throttle)
         print("Throttling...");
         
         sleep($throttle);
         
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check to see if edit was successful
         if (empty($result["error"])) {
                 
             return true;
@@ -561,18 +457,15 @@ class Tybot {
         
         global $wiki;
         
-        #Set data to get login token
         $data = array(
             "action" => "login",
             "lgname" => $user,
             "lgpass" => $pass,
             "format" => "php",
         );
-        
-        #Call post function to get and return data
+
         $result = $this->post($data, $wiki);
         
-        #Set data for login with token
         $data = array(
             "action" => "login",
             "lgname" => $user,
@@ -581,11 +474,26 @@ class Tybot {
             "format" => "php"
         );
         
-        #Attempt to login to the wiki
         $result = $this->post($data, $wiki);
         
-        #Check to see if we are logged in and return a boolean
         if ($result["login"]["result"] == "Success") {
+            
+            print("Now logged in.\n");
+            print("Fetching edit token...\n");
+
+            $result = $this->token();
+
+            if ($result != false && !empty($result)) {
+
+                $this->$token = $result;
+
+                print("Edit token revieved.\n");
+
+            } else {
+
+                print("Failed to fetch edit token.\n");
+
+            }
 
             return true;
             
@@ -608,22 +516,17 @@ class Tybot {
     ################################################
     public function protect($page, $movelevel="", $editlevel="", $expiry="", $summary="") {
 
-        global $token;
-
-        #Set up data for api post
         $data = array(
             "action" => "protect",
             "title" => $page,
             "protections" => "edit=$editlevel|move=$movelevel",
             "expiry" => $expiry,
             "format" => "php",
-            "token" => $token
+            "token" => $this->$token
         );
 
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check for errors
         if (empty($result["error"])) {
 
             return true;
@@ -647,21 +550,16 @@ class Tybot {
     ##############################################
     public function unblock($target, $summary="") {
 
-        global $token;
-
-        #Set up data for api post
         $data = array(
             "action" => "unblock",
             "user" => $target,
             "reason" => $summary,
             "format" => "php",
-            "token" => $token
+            "token" => $this->$token
         );
 
-        #Send request and grab result
         $result = $this->post($data);
 
-        #Check for errors
         if (empty($result["error"])) {
 
             return true;
@@ -685,21 +583,16 @@ class Tybot {
     ############################################
     public function undelete($page, $summary="") {
 
-        global $token;
-
-        #Set up data for api post
         $data = array(
             "action" => "undelete",
             "title" => $page,
             "reason" => $summary,
             "format" => "php",
-            "token" => $token
+            "token" => $this->$token
         );
 
-        #Send request and grab result
         $result = $this->post($data);
 	
-        #Check for errors
         if (empty($result["error"])) {
 
             return true;
