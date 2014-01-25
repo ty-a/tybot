@@ -37,4 +37,4 @@
 ###################
 
 #Double Redirects
-include("/core/modules/tybot.doubleredirects.php");
+include("core/modules/tybot.doubleredirects.php");
