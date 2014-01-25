@@ -461,7 +461,7 @@ class Tybot {
             "format" => "php",
         );
 
-        $result = $this->post($data, $wiki);
+        $result = $this->post($data);
         
         $data = array(
             "action" => "login",
@@ -471,7 +471,7 @@ class Tybot {
             "format" => "php"
         );
         
-        $result = $this->post($data, $wiki);
+        $result = $this->post($data);
         
         if ($result["login"]["result"] == "Success") {
             
