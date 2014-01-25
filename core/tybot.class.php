@@ -44,11 +44,11 @@ class Tybot {
         $cookiefile = tempnam("/tmp", "CURLCOOKIE");
 
         $curloptions = array(
-            CURLOPT_COOKIEFILE = $cookiefile,
-            CURLOPT_COOKIEFILE = $cookiefile,
-            CURLOPT_RETURNTRANSFER = true,
-            CURLOPT_USERAGENT = "tybot-4.0",
-            CURLOPT_POST = true
+            CURLOPT_COOKIEFILE => $cookiefile,
+            CURLOPT_COOKIEFILE => $cookiefile,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_USERAGENT => "tybot-4.0",
+            CURLOPT_POST => true
         );
 
         #Initialize Curl
