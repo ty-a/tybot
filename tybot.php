@@ -30,3 +30,35 @@ $welcome .= "Please type \"help\" for more info\n";
 $welcome .= "--------------------------------\n";
 
 print($welcome);
+
+#########################
+# Call the input function
+#########################
+input();
+
+###################
+# Gather user input
+###################
+function input() {
+
+    #Prompt user
+    $input = readline("> ");
+
+    #Pass input to switch function
+    process($input);
+
+}
+
+##############################
+# Start modules based on input
+##############################
+function process($input) {
+
+    switch ($input) {
+
+        default:
+            print("The command you entered is invalid.\n");
+
+    }
+
+}
