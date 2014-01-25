@@ -20,17 +20,6 @@
 # Wrapper to interface with the MediaWiki API
 #############################################
 class Tybot {
-
-    ##############################
-    ###   CURL-LIB VARIABLES   ###
-    ##############################
-    public $curloptions = array(
-        CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
-        CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
-        CURLOPT_RETURNTRANSFER = true,
-        CURLOPT_USERAGENT = "tybot-4.0",
-        CURLOPT_POST = true
-    );
     
     #################
     ###   TOKEN   ###
@@ -52,11 +41,19 @@ class Tybot {
     
         global $wiki;
         
+        $curloptions = array(
+            CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
+            CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
+            CURLOPT_RETURNTRANSFER = true,
+            CURLOPT_USERAGENT = "tybot-4.0",
+            CURLOPT_POST = true
+        );
+
         #Initialize Curl
         $ch = curl_init();
         
         #Define options
-        curl_setopt_array($ch, $this->$curloptions);
+        curl_setopt_array($ch, $curloptions);
         
         curl_setopt($ch, CURLOPT_URL, $wiki);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
