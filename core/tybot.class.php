@@ -41,9 +41,11 @@ class Tybot {
     
         global $wiki;
         
+        $cookiefile = tempnam("/tmp", "CURLCOOKIE");
+
         $curloptions = array(
-            CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
-            CURLOPT_COOKIEFILE = tempnam("/tmp", "CURLCOOKIE"),
+            CURLOPT_COOKIEFILE = $cookiefile,
+            CURLOPT_COOKIEFILE = $cookiefile,
             CURLOPT_RETURNTRANSFER = true,
             CURLOPT_USERAGENT = "tybot-4.0",
             CURLOPT_POST = true
