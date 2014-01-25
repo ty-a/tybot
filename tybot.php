@@ -57,7 +57,11 @@ function process($input) {
     switch ($input) {
 
         default:
+
             print("The command you entered is invalid.\n");
+            
+            #Return to input
+            input();
 
     }
 
