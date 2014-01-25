@@ -41,29 +41,30 @@ class Tybot {
     
         global $wiki;
         
+        #Initialize Curl
+        $ch = curl_init();
+
         $cookiefile = tempnam("/tmp", "CURLCOOKIE");
 
         $curloptions = array(
-            CURLOPT_COOKIESESSION => true,
+            CURLOPT_URL => $wiki,
+            CURLOPT_POSTFIELDS => $data,
             CURLOPT_COOKIEFILE => $cookiefile,
             CURLOPT_COOKIEJAR => $cookiefile,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT => "tybot-4.0",
             CURLOPT_POST => true
         );
-
-        #Initialize Curl
-        $ch = curl_init();
         
         #Define options
         curl_setopt_array($ch, $curloptions);
         
-        curl_setopt($ch, CURLOPT_URL, $wiki);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        
         #Perform request
         $result = curl_exec($ch);
         
+        #Close stream
+        curl_close($ch);
+
         #Unserialize request
         $result = unserialize($result);
 		
