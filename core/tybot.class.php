@@ -496,7 +496,7 @@ class Tybot {
             
         } else {
         
-            die("Failed to login: " . $result["error"]["code"] . "\n");
+            die("Failed to login.\n");
             
         }
             
