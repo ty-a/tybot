@@ -45,6 +45,7 @@ class Tybot {
 
         $curloptions = array(
             CURLOPT_COOKIEFILE => $cookiefile,
+            CURLOPT_COOKIEJAR => $cookiefile,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT => "tybot-4.0",
             CURLOPT_POST => true
