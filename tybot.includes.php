@@ -31,3 +31,10 @@
 ###############################################
 /*#*/ include("tybot.configuration.php"); /*#*/
 ###############################################
+
+###################
+###   MODULES   ###
+###################
+
+#Double Redirects
+include("/core/modules/tybot.doubleredirects.php");

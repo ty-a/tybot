@@ -31,6 +31,16 @@ $welcome .= "--------------------------------\n";
 
 print($welcome);
 
+#######################
+# Create Tybot instance
+#######################
+$tybot = new Tybot();
+
+###############
+# Login to wiki
+###############
+$result = $tybot->login($user, $pass);
+
 #########################
 # Call the input function
 #########################
@@ -55,6 +65,19 @@ function input() {
 function process($input) {
 
     switch ($input) {
+    
+        case "double redirects":
+        
+            #Initialize module
+            $m = new DoubleRedirect();
+            
+            #Call init method
+            $m->init();
+            
+            #Return to start
+            input();
+            
+            break;
 
         default:
 
