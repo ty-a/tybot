@@ -44,6 +44,7 @@ class Tybot {
         $cookiefile = tempnam("/tmp", "CURLCOOKIE");
 
         $curloptions = array(
+            CURLOPT_COOKIESESSION => true,
             CURLOPT_COOKIEFILE => $cookiefile,
             CURLOPT_COOKIEJAR => $cookiefile,
             CURLOPT_RETURNTRANSFER => true,
