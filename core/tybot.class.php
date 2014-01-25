@@ -45,7 +45,6 @@ class Tybot {
 
         $curloptions = array(
             CURLOPT_COOKIEFILE => $cookiefile,
-            CURLOPT_COOKIEFILE => $cookiefile,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_USERAGENT => "tybot-4.0",
             CURLOPT_POST => true
@@ -65,9 +64,8 @@ class Tybot {
         
         #Unserialize request
         $result = unserialize($result);
-
+		
         return $result;
-               
     }
     
     ############################
@@ -610,4 +608,4 @@ class Tybot {
     ###   END ACTIONS   ###
     #######################
     
-} 
+}
