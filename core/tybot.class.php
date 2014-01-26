@@ -39,29 +39,19 @@ class Tybot {
     ######################################
     public function post($data) {
     
-        global $wiki;
-        
-        #Initialize Curl
+        global $curloptions, $wiki
+
         $ch = curl_init();
 
-        $cookiefile = tempnam("/tmp", "CURLCOOKIE");
-        
-        #Define options
+        curl_setopt_array($ch, $curloptions);
+
         curl_setopt($ch, CURLOPT_URL, $wiki);
         curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
-        curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, "tybot/4.0/wiki-bot");
-        curl_setopt($ch, CURLOPT_POST, true);
-        
-        #Perform request
-        $result = curl_exec($ch);
 
-        #Unserialize request
+        $result = curl_exec($ch);
         $result = unserialize($result);
-		
-        return $result;
+
+        return $result
     }
     
     ############################
