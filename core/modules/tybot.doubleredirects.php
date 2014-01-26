@@ -23,7 +23,7 @@ class DoubleRedirect extends Tybot {
     public function init() {
     
         #Notify of start
-        print("Starting Double Redirect Resolver");
+        print("Starting Double Redirect Resolver\n");
         
         #Get a list of double redirects
         $result = $this->querySpecialPage("DoubleRedirects");
@@ -44,7 +44,7 @@ class DoubleRedirect extends Tybot {
             }
 
             #find and replace redirect text
-            $page = str_replace("#REDIRECT [[", "", $r);
+            $page = str_replace("#REDIRECT [[", "", $result);
             $page = str_replace("]]", "", $page);
             
             #Get the page contents of the broken redirect
