@@ -39,7 +39,8 @@ class Tybot {
     ######################################
     public function post($data) {
     
-        global $curloptions, $wiki
+        global $curloptions,
+               $wiki;
 
         $ch = curl_init();
 
