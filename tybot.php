@@ -84,6 +84,12 @@ function input() {
 function process($input) {
 
     switch ($input) {
+
+        case "exit":
+
+            die("Now exiting Tybot...\n");
+
+            break;
     
         case "double redirects":
         
