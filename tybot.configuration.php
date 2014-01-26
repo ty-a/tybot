@@ -30,3 +30,17 @@ $user = "MyMediaWikiBot";
 ###   WIKI PASSWORD   ###
 #########################
 $pass = "MyMediaWikiPassword";
+
+########################
+###   CURL OPTIONS   ###
+###   DO NOT TOUCH   ###
+########################
+$useragent = "tybot-4.0/bot";
+$cookiefile = tempnam("/tmp", "CURLCOOKIE");
+$curloptions = array(
+    CURLOPT_COOKIEFILE => $cookiefile,
+    CURLOPT_COOKIEJAR => $cookiefile,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_USERAGENT => $useragent,
+    CURLOPT_POST => true
+);
