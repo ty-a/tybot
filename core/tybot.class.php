@@ -136,7 +136,7 @@ class Tybot {
     public function pageContent($title) {
 
         $data = array(
-	        "action" => "query",
+	    "action" => "query",
             "format" => "php",
             "prop" => "revisions",
             "rvprop" => "content",
