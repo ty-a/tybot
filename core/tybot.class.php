@@ -24,7 +24,7 @@ class Tybot {
     #################
     ###   TOKEN   ###
     ################# 
-    public $token;
+    public $token = "";
 
     ##############################
     ###   START CORE ACTIONS   ###
@@ -52,7 +52,7 @@ class Tybot {
         $result = curl_exec($ch);
         $result = unserialize($result);
 
-        return $result
+        return $result;
     }
     
     ############################
