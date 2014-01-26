@@ -52,7 +52,7 @@ class Tybot {
         curl_setopt($ch, CURLOPT_COOKIEFILE, $cookiefile);
         curl_setopt($ch, CURLOPT_COOKIEJAR, $cookiefile);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($ch, CURLOPT_USERAGENT, "tybot-4.0");
+        curl_setopt($ch, CURLOPT_USERAGENT, "tybot/4.0/wiki-bot");
         curl_setopt($ch, CURLOPT_POST, true);
         
         #Perform request
