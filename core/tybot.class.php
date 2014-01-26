@@ -411,7 +411,7 @@ class Tybot {
             "format" => "php"
         );
         
-        print("Throttling...");
+        print("Throttling...\n");
         
         sleep($throttle);
         
