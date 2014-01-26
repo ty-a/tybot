@@ -71,7 +71,7 @@ class DoubleRedirect extends Tybot {
             } else {
             
                 #Print success
-                print ("Redlink resolved!\n");
+                print ("Redirect resolved!\n");
                 
             }
             
