@@ -41,6 +41,25 @@ $tybot = new Tybot();
 ###############
 $result = $tybot->login($user, $pass);
 
+###########
+# Get token
+###########
+print("Fetching edit token...\n");
+
+$result = $tybot->token();
+
+if ($result != false) {
+
+    print("Edit token fetched.\n");
+
+    $token = $result;
+
+} else {
+
+    die("Failed to fetch token.\n");
+
+}
+
 #########################
 # Call the input function
 #########################
