@@ -20,11 +20,6 @@
 # Wrapper to interface with the MediaWiki API
 #############################################
 class Tybot {
-    
-    #################
-    ###   TOKEN   ###
-    ################# 
-    public $token = "";
 
     ##############################
     ###   START CORE ACTIONS   ###
@@ -331,13 +326,15 @@ class Tybot {
     ##############################################
     public function block($target, $summary="", $expiry="indefinite") {
 
+        global $token;
+
         $data = array(
             "action" => "block",
             "user" => "target",
             "reason" => $summary,
             "expiry" => $expiry,
             "format" => "php",
-            "token" => $this->$token
+            "token" => $token
         );
 
         $result = $this->post($data);
@@ -365,12 +362,14 @@ class Tybot {
     ############################################
     public function delete($page, $summary="") {
     	
+        global $token;
+
         $data = array(
             "action" => "delete",
             "title" => $page,
             "reason" => $summary,
             "format" => "php",
-            "token" => $this->$token
+            "token" => $token
         );
         
         $result = $this->post($data);
@@ -400,13 +399,15 @@ class Tybot {
     ###########################################
     public function edit($page, $text, $summary="", $bot=1, $throttle=1) {
     	
+        global $token;
+
         $data = array(
             "action" => "edit",
             "title" => $page,
             "summary" => $summary,
             "text" => $text,
             "bot" => $bot,
-            "token" => $this->$token,
+            "token" => $token,
             "format" => "php"
         );
         
@@ -462,22 +463,7 @@ class Tybot {
         
         if ($result["login"]["result"] == "Success") {
             
-            print("Now logged in.\n");
-            print("Fetching edit token...\n");
-
-            $result = $this->token();
-
-            if ($result != false && !empty($result)) {
-
-                $this->$token = $result;
-
-                print("Edit token revieved.\n");
-
-            } else {
-
-                print("Failed to fetch edit token.\n");
-
-            }
+            print("Now logged in!\n");
 
             return true;
             
@@ -500,13 +486,15 @@ class Tybot {
     ################################################
     public function protect($page, $movelevel="", $editlevel="", $expiry="", $summary="") {
 
+        global $token;
+
         $data = array(
             "action" => "protect",
             "title" => $page,
             "protections" => "edit=$editlevel|move=$movelevel",
             "expiry" => $expiry,
             "format" => "php",
-            "token" => $this->$token
+            "token" => $token
         );
 
         $result = $this->post($data);
@@ -533,6 +521,8 @@ class Tybot {
     # Arguments - string[$target] string[$summary]
     ##############################################
     public function unblock($target, $summary="") {
+
+        global $token;
 
         $data = array(
             "action" => "unblock",
@@ -567,12 +557,14 @@ class Tybot {
     ############################################
     public function undelete($page, $summary="") {
 
+        global $token;
+
         $data = array(
             "action" => "undelete",
             "title" => $page,
             "reason" => $summary,
             "format" => "php",
-            "token" => $this->$token
+            "token" => $token
         );
 
         $result = $this->post($data);
