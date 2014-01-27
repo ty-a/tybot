@@ -360,7 +360,7 @@ class Tybot {
     #
     # Arguments - string[$page] string[$summary]
     ############################################
-    public function delete($page, $summary="") {
+    public function deletePage($page, $summary="") {
     	
         global $token;
 
