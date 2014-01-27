@@ -38,3 +38,6 @@
 
 #Double Redirects
 include("core/modules/tybot.doubleredirects.php");
+
+#Unused Images
+include("core/modules/tybot.unusedimages.php");

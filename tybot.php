@@ -105,8 +105,17 @@ function process($input) {
         
             #Initialize module
             $m = new DoubleRedirect();
+            $m->init();
             
-            #Call init method
+            #Return to start
+            input();
+            
+            break;
+            
+        case "unused images":
+         
+            #Initialize module
+            $m = new UnusedImages();
             $m->init();
             
             #Return to start
