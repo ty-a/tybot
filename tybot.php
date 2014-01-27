@@ -79,12 +79,12 @@ function input() {
 
     } else {
 
-        $line = readline('$ ');
+        $line = readline("> ");
 
     }
 
     #Pass input to switch function
-    process($input);
+    process($line);
 
 }
 
