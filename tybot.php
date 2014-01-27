@@ -71,7 +71,17 @@ input();
 function input() {
 
     #Prompt user
-    $input = readline("> ");
+    if (PHP_OS == 'WINNT') {
+
+        echo "> ";
+
+        $line = stream_get_line(STDIN, 1024, PHP_EOL);
+
+    } else {
+
+        $line = readline('$ ');
+
+    }
 
     #Pass input to switch function
     process($input);
