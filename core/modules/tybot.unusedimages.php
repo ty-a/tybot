@@ -32,18 +32,18 @@ class UnusedImages extends Tybot {
         foreach($result["query"]["querypage"]["results"] as $image) {
         
             #Print message
-            print("Attempting to delete File:" . $result["title"] . "\n");
+            print("Attempting to delete " . $image["title"] . "\n");
             
             #Delete image
             $result = $this->deletePage($image["title"], "Unused image - bot");
             
             if (empty($result["error"])) {
             
-                print("File:" . $image["title"] . " deleted!\n");
+                print($image["title"] . " deleted!\n");
                 
             } else {
             
-                print("Failed to delete File:" . $image["title"] . "\n");
+                print("Failed to delete " . $image["title"] . "\n");
                 
             }
             
