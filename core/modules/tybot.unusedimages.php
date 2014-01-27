@@ -37,7 +37,7 @@ class UnusedImages extends Tybot {
             #Delete image
             $result = $this->deletePage($image["title"], "Unused image - bot");
             
-            if (empty($result["error"])) {
+            if ($result != false) {
             
                 print($image["title"] . " deleted!\n");
                 
