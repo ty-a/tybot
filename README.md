@@ -2,6 +2,8 @@
 
 Tybot is a CLI bot program written in PHP by Wikia/Wikimedia user TyA and Wikia user Lil' Miss Rarity.
 
+A link to the last version by TyA, before Lil' Miss Rarity's changes, can be found [here](https://github.com/ty-a/tybot/tree/6fb67f27b29cb2c13d58fc2aba61bae65d01c5f1).
+
 ## About
 
 Tybot is written in PHP and tested on PHP v5.3.* and is not garunteed to work on other versions.
